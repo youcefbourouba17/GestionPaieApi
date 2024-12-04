@@ -1,3 +1,4 @@
+using GestionPaieApi.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<DbContext>(options =>
+builder.Services.AddDbContext<Db_context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
 
@@ -19,6 +20,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// migrate w add seeds
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<Db_context>();
+        context.Database.Migrate(); 
+        SeedData.Initialize(context);
+    }
+    catch (Exception ex)
+    {
+       
+        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
+    }
+}
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

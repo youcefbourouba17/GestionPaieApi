@@ -6,69 +6,72 @@ namespace GestionPaieApi.Data
 {
     public class SeedData
     {
-        public static void Initialize(Dbcontext context)
+        public static void Initialize(Db_context context)
         {
             // Seed ResponsabilitesAdministratives
             if (!context.ResponsabilitesAdministratives.Any())
             {
-                context.ResponsabilitesAdministratives.AddRange(
+                var responsibilities = new List<ResponsabiliteAdministrative>
+                {
                     new ResponsabiliteAdministrative
                     {
-
+                        ResponsabiliteID = "RESP001",
                         NomResp = "Responsable de Post",
                         Description = "Responsable du bon fonctionnement du bureau ou du poste."
                     },
                     new ResponsabiliteAdministrative
                     {
-
+                        ResponsabiliteID = "RESP002",
                         NomResp = "Chef Département",
                         Description = "Chef d'un département, gère les activités et ressources du département."
                     },
                     new ResponsabiliteAdministrative
                     {
-
+                        ResponsabiliteID = "RESP003",
                         NomResp = "Chef Service",
                         Description = "Responsable d'un service spécifique dans une organisation."
                     },
                     new ResponsabiliteAdministrative
                     {
-
+                        ResponsabiliteID = "RESP004",
                         NomResp = "Chef Projet",
                         Description = "Responsable de la gestion et coordination d'un projet."
                     },
                     new ResponsabiliteAdministrative
                     {
-
+                        ResponsabiliteID = "RESP005",
                         NomResp = "Responsable Relations Extérieures",
                         Description = "Gère les relations avec les partenaires externes et les institutions."
                     },
                     new ResponsabiliteAdministrative
                     {
-
+                        ResponsabiliteID = "RESP006",
                         NomResp = "Responsable Formation Personnel",
                         Description = "Supervise et organise la formation du personnel de l'entreprise."
                     },
                     new ResponsabiliteAdministrative
                     {
-
+                        ResponsabiliteID = "RESP007",
                         NomResp = "Président de Commission des Œuvres Sociales",
                         Description = "Supervise les activités sociales au sein de l'organisation."
                     },
                     new ResponsabiliteAdministrative
                     {
-
+                        ResponsabiliteID = "RESP008",
                         NomResp = "Président du Conseil de Discipline",
                         Description = "Gère les affaires disciplinaires au sein de l'organisation."
                     }
-                );
+                };
 
+                context.ResponsabilitesAdministratives.AddRange(responsibilities);
                 context.SaveChanges();
             }
 
-            // Seed Employes with Algerian names and locations
+            // Seed Employes
             if (!context.Employes.Any())
             {
-                context.Employes.AddRange(
+                var employes = new List<Employe>
+                {
                     new Employe
                     {
                         NSS = "1234567890",
@@ -86,12 +89,7 @@ namespace GestionPaieApi.Data
                         Categorie = "Gestion",
                         Section = "Direction de Projet",
                         TauxIndemniteNuisance = 10.5m,
-                        PrimeVariable = 1500,
-                        Responsabilites = new List<ResponsabiliteAdministrative>
-                        {
-                        new ResponsabiliteAdministrative { Description = "Responsable de Post" },
-                        new ResponsabiliteAdministrative { Description = "Chef Projet" }
-                        }
+                        PrimeVariable = 1500
                     },
                     new Employe
                     {
@@ -110,18 +108,47 @@ namespace GestionPaieApi.Data
                         Categorie = "Administratif",
                         Section = "Ressources Humaines",
                         TauxIndemniteNuisance = 8.5m,
-                        PrimeVariable = 1200,
-                        Responsabilites = new List<ResponsabiliteAdministrative>
-                        {
-                        new ResponsabiliteAdministrative { Description = "Chef Département" },
-                        new ResponsabiliteAdministrative { Description = "Responsable Formation Personnel" }
-                        }
+                        PrimeVariable = 1200
                     }
-                );
+                };
 
+                context.Employes.AddRange(employes);
+                context.SaveChanges();
+            }
+
+            // Seed EmployeResponsabilites
+            if (!context.EmployeResponsabilites.Any())
+            {
+                var employeResponsibilities = new List<EmployeResponsabilites>
+                {
+                    // Assign responsibilities to Bouzid Ahmed
+                    new EmployeResponsabilites
+                    {
+                        EmployeID = "1234567890",
+                        ResponsabiliteID = "RESP001" // Responsable de Post
+                    },
+                    new EmployeResponsabilites
+                    {
+                        EmployeID = "1234567890",
+                        ResponsabiliteID = "RESP004" // Chef Projet
+                    },
+
+                    // Assign responsibilities to Mebarki Sofia
+                    new EmployeResponsabilites
+                    {
+                        EmployeID = "2345678901",
+                        ResponsabiliteID = "RESP002" // Chef Département
+                    },
+                    new EmployeResponsabilites
+                    {
+                        EmployeID = "2345678901",
+                        ResponsabiliteID = "RESP006" // Responsable Formation Personnel
+                    }
+                };
+
+                context.EmployeResponsabilites.AddRange(employeResponsibilities);
                 context.SaveChanges();
             }
         }
-        
     }
 }

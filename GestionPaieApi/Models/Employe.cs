@@ -53,6 +53,6 @@ namespace GestionPaieApi.Models
         public decimal? PrimeVariable { get; set; }
 
         // Navigation property for responsibilities
-        public ICollection<ResponsabiliteAdministrative> Responsabilites { get; set; } = new List<ResponsabiliteAdministrative>();
+        public ICollection<EmployeResponsabilites> EmployeResponsabilites { get; set; } = new List<EmployeResponsabilites>();
     }
 }
