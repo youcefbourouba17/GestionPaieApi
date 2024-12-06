@@ -6,7 +6,8 @@ namespace GestionPaieApi.Models
     public class EmployeResponsabilites
     {
         [Key]
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int EmployeResponsabilitesId { get; set; }
 
 
         [ForeignKey("EmployeID")]

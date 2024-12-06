@@ -54,5 +54,7 @@ namespace GestionPaieApi.Models
 
         // Navigation property for responsibilities
         public ICollection<EmployeResponsabilites> EmployeResponsabilites { get; set; } = new List<EmployeResponsabilites>();
+
+        public ICollection<LettreAccompagnee>? DemandesChangements { get; set; } = new List<LettreAccompagnee>();
     }
 }

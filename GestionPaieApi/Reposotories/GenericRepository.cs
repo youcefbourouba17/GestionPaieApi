@@ -21,24 +21,29 @@ namespace GestionPaieApi.Repositories
         
         public async Task AddAsync(T entity)
         {
-            await _dbSet.AddAsync(entity); 
+            await _dbSet.AddAsync(entity);
+            await SaveAsync();
         }
 
         
-        public void Delete(T entity)
+        public async void Delete(T entity)
         {
-            _dbSet.Remove(entity); 
+            _dbSet.Remove(entity);
+            await SaveAsync();
         }
 
         
-        public async Task<ICollection<T>> GetAllAsync()
-        {
-            return await _dbSet.ToListAsync();
-        }
 
-        public Task<ICollection<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
+        public async Task<ICollection<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
         {
-            throw new NotImplementedException();
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<T> GetByIdAsync(int id)
@@ -57,9 +62,10 @@ namespace GestionPaieApi.Repositories
         }
 
         
-        public void Update(T entity)
+        public async void Update(T entity)
         {
-            _dbSet.Update(entity); 
+             _dbSet.Update(entity);
+            await SaveAsync();
         }
     }
 }

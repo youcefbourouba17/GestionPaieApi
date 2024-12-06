@@ -17,7 +17,7 @@ namespace GestionPaieApi.Data
         {
             //// EmployeResponsabilites
             modelBuilder.Entity<EmployeResponsabilites>()
-            .HasKey(er => er.Id);
+            .HasKey(er => er.EmployeResponsabilitesId);
 
             modelBuilder.Entity<EmployeResponsabilites>()
                 .HasOne(er => er.Employe)

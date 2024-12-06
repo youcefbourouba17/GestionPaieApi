@@ -2,6 +2,7 @@ using GestionPaieApi.Data;
 using GestionPaieApi.Interfaces;
 using GestionPaieApi.Models;
 using GestionPaieApi.Repositories;
+using GestionPaieApi.Reposotories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,9 @@ builder.Services.AddDbContext<Db_context>(options =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 /// scoopes
 builder.Services.AddScoped<GenericRepository<Employe>, GenericRepository<Employe>>();
+builder.Services.AddScoped<GenericRepository<LettreAccompagnee>, GenericRepository<LettreAccompagnee>>();
+builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
