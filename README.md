@@ -44,3 +44,7 @@ https://localhost:<port>/swagger
 ### Troubleshooting
 - If database seeding fails, check the error logs in the console.
 - Ensure that the database server is running and accessible.
+
+### DATA BASE
+![newDiag](https://github.com/user-attachments/assets/9e05d9f3-3b8e-4ddf-8e84-4cf670754946)
+
