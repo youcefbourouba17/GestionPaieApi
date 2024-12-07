@@ -8,5 +8,6 @@ namespace GestionPaieApi.Interfaces
         Task<ResponsabiliteAdministrative> GetEmployeeResponsabilitiesByID(string id);
 
         Task<List<Employe>> SearchUsersAsync(string searchTerm);
+        Task<bool> CheckUserAsync(string employeID);
     }
 }

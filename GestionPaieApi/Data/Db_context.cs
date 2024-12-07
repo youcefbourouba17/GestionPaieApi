@@ -29,6 +29,8 @@ namespace GestionPaieApi.Data
                 .WithMany(r => r.EmployeResponsabilites)
                 .HasForeignKey(er => er.ResponsabiliteID);
 
+            modelBuilder.Entity<Pointage>()
+                .HasKey(p => new { p.EmployeId, p.Date });
             //// ResponsabiliteAdministrative
             modelBuilder.Entity<ResponsabiliteAdministrative>()
             .HasIndex(e => e.NomResp)

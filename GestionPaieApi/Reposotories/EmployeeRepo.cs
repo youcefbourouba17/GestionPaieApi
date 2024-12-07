@@ -28,5 +28,11 @@ namespace GestionPaieApi.Reposotories
                          u.Nom.Contains(searchTerm) ||
                          u.Prenom.Contains(searchTerm)).ToListAsync();
         }
+        public async Task<bool> CheckUserAsync(string employeID)
+        {
+
+            return await _context.Employes.FindAsync(employeID) != null;
+        }
+
     }
 }

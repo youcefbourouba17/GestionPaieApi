@@ -26,7 +26,7 @@ namespace GestionPaieApi.Repositories
         }
 
         
-        public async void Delete(T entity)
+        public async Task Delete(T entity)
         {
             _dbSet.Remove(entity);
             await SaveAsync();
@@ -54,6 +54,10 @@ namespace GestionPaieApi.Repositories
         {
             return await _dbSet.FindAsync(id);
         }
+        public async Task<T> GetByIdAsync(string id,DateTime date)
+        {
+            return await _dbSet.FindAsync(id,date);
+        }
 
 
         public async Task SaveAsync()
@@ -62,7 +66,7 @@ namespace GestionPaieApi.Repositories
         }
 
         
-        public async void Update(T entity)
+        public async Task Update(T entity)
         {
              _dbSet.Update(entity);
             await SaveAsync();

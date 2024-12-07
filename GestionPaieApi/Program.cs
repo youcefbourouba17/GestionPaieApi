@@ -19,6 +19,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 /// scoopes
 builder.Services.AddScoped<GenericRepository<Employe>, GenericRepository<Employe>>();
 builder.Services.AddScoped<GenericRepository<LettreAccompagnee>, GenericRepository<LettreAccompagnee>>();
+builder.Services.AddScoped<GenericRepository<Pointage>, GenericRepository<Pointage>>();
 builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
 
 var app = builder.Build();

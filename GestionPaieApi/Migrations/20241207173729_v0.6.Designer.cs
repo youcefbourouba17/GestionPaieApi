@@ -4,6 +4,7 @@ using GestionPaieApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionPaieApi.Migrations
 {
     [DbContext(typeof(Db_context))]
-    partial class Db_contextModelSnapshot : ModelSnapshot
+    [Migration("20241207173729_v0.6")]
+    partial class v06
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,37 +164,6 @@ namespace GestionPaieApi.Migrations
                     b.ToTable("LettreAccompagnee");
                 });
 
-            modelBuilder.Entity("GestionPaieApi.Models.Pointage", b =>
-                {
-                    b.Property<string>("EmployeId")
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan?>("DebutApresMidi")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan?>("DebutMatinee")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan?>("DureeDePause")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan?>("FinApresMidi")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan?>("FinMatinee")
-                        .HasColumnType("time");
-
-                    b.Property<double?>("HeuresSupplementaires")
-                        .HasColumnType("float");
-
-                    b.HasKey("EmployeId", "Date");
-
-                    b.ToTable("Pointage");
-                });
-
             modelBuilder.Entity("GestionPaieApi.Models.ResponsabiliteAdministrative", b =>
                 {
                     b.Property<string>("ResponsabiliteID")
@@ -238,17 +210,6 @@ namespace GestionPaieApi.Migrations
                 {
                     b.HasOne("GestionPaieApi.Models.Employe", "Employe")
                         .WithMany("DemandesChangements")
-                        .HasForeignKey("EmployeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employe");
-                });
-
-            modelBuilder.Entity("GestionPaieApi.Models.Pointage", b =>
-                {
-                    b.HasOne("GestionPaieApi.Models.Employe", "Employe")
-                        .WithMany()
                         .HasForeignKey("EmployeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

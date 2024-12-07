@@ -4,6 +4,7 @@ using GestionPaieApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionPaieApi.Migrations
 {
     [DbContext(typeof(Db_context))]
-    partial class Db_contextModelSnapshot : ModelSnapshot
+    [Migration("20241207222332_v0.7")]
+    partial class v07
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,21 +173,27 @@ namespace GestionPaieApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<TimeSpan?>("DebutApresMidi")
+                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("DebutMatinee")
+                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("DureeDePause")
+                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("FinApresMidi")
+                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("FinMatinee")
+                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<double?>("HeuresSupplementaires")
+                        .IsRequired()
                         .HasColumnType("float");
 
                     b.HasKey("EmployeId", "Date");

@@ -7,8 +7,8 @@ namespace GestionPaieApi.Interfaces
         Task<ICollection<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
         Task<T> GetByIdAsync(int id);
         Task AddAsync(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        Task Update(T entity);
+        Task Delete(T entity);
         Task SaveAsync();
     }
 }
