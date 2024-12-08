@@ -9,6 +9,8 @@ namespace GestionPaieApi.Mapper
         public EmployeProfile()
         {
             CreateMap<Employe, EmployeDisplayDto>();
+
+            CreateMap<EmployeEditDto, Employe>();
         }
     }
 }

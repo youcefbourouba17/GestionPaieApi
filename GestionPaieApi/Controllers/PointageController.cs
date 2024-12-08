@@ -61,17 +61,17 @@ namespace GestionPaieApi.Controllers
                 }
 
                 
-                if (pointage.FinMatinee == null)
+                else if (pointage.FinMatinee == null)
                 {
                     return await HandleFinMatinee(pointage, currentTime);
                 }
 
-                if (pointage.DebutApresMidi == null && currentTime.Hour >= 13 && currentTime.Hour < 16.5)
+                else if (pointage.DebutApresMidi == null && currentTime.Hour >= 13 && currentTime.Hour < 16.5)
                 {
                     return await HandleDebutApresMidi(pointage, currentTime);
                 }
 
-                if (pointage.FinApresMidi == null)
+                else if (pointage.FinApresMidi == null)
                 {
                     return await HandleFinApresMidi(pointage, currentTime);
                 }
