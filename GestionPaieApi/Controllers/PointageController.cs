@@ -3,6 +3,7 @@ using GestionPaieApi.DTOs;
 using GestionPaieApi.Interfaces;
 using GestionPaieApi.Models;
 using GestionPaieApi.Repositories;
+using GestionPaieApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestionPaieApi.Controllers
@@ -24,84 +25,109 @@ namespace GestionPaieApi.Controllers
         [HttpPost("PostPointage")]
         public async Task<IActionResult> PostPointage([FromBody] string employeeID)
         {
-
             try
             {
+                
                 if (!await _employeRepo.CheckUserAsync(employeeID))
                 {
-                    return NotFound("Employee ID wrong or doesnt exist");
+                    return NotFound("Employee ID wrong or doesn't exist");
                 }
 
-                var time = DateTime.Today.Add(new TimeSpan(13, 43, 0));
                 
-                Pointage lettre =await _genericRepository.GetByIdAsync(employeeID,time.Date);
-                if (lettre==null )
-                {
-                    if (time.Hour < 12)
-                    {
-                        lettre = new Pointage
-                        {
-                            EmployeId = employeeID,
-                            Date = time.Date,
-                            DebutMatinee = time.TimeOfDay
-                        };
-                        await _genericRepository.AddAsync(lettre);
-                        return Ok("La pointage debutMatine avec succès.");
-                    }
-                    else return BadRequest("Error cant save record");
-                }
-                else if (lettre.FinMatinee == null && time.Hour<=12)
-                {
+                var currentTime = DateTime.Today.Add(new TimeSpan(18,04, 0));
+                var currentDate = currentTime.Date;
 
-                    lettre.FinMatinee = time.TimeOfDay;
-                    _genericRepository.Update(lettre);
-                    return Ok("La pointage finMatinee avec succès.");
-                }
-                else if (lettre.FinMatinee == null && time.Hour > 12)
-                {
+                
+                Pointage pointage = await _genericRepository.GetByIdAsync(employeeID, currentDate);
 
-                    lettre.FinMatinee =new TimeSpan(12,0,0);
-                    _genericRepository.Update(lettre);
-                    return Ok("La pointage finMatinee avec succès.");
-                }
-                else if (lettre.DebutApresMidi == null && time.Hour>=13 && time.Hour<16.5)
+                if (pointage == null)
                 {
                     
-                    lettre.DebutApresMidi = time.TimeOfDay;
-                    lettre.DureeDePause = lettre.DebutApresMidi - lettre.FinMatinee;
-                    _genericRepository.Update(lettre);
-                    return Ok($"La pointage DebutApresMidi {lettre.DebutApresMidi} et Pause de {lettre.DureeDePause} avec succès.");
+                    if (currentTime.Hour < 12)
+                    {
+                        pointage = new Pointage
+                        {
+                            EmployeId = employeeID,
+                            Date = currentDate,
+                            DebutMatinee = currentTime.TimeOfDay
+                        };
+                        await _genericRepository.AddAsync(pointage);
+                        return Ok("Pointage début matinée enregistré avec succès.");
+                    }
+                    else
+                    {
+                        return BadRequest("Error: Unable to save the record.");
+                    }
                 }
-                else if (lettre.FinApresMidi == null && time.Hour <= 16.5)
-                {
 
-                    lettre.FinApresMidi = time.TimeOfDay;
-                    lettre.DureeDePause = lettre.DebutApresMidi - lettre.FinMatinee;
-                    lettre.HeuresSupplementaires =0;
-                    _genericRepository.Update(lettre);
-                    return Ok($"La pointage DebutApresMidi {lettre.DebutApresMidi} et Pause de {lettre.DureeDePause}" +
-                        $" et heur supp {lettre.HeuresSupplementaires} avec succès.");
-                }
-                else if (lettre.FinApresMidi == null && time.Hour > 16.5)
-                {
-                    lettre.FinApresMidi =new TimeSpan(16, 30, 00);
-                    lettre.DureeDePause = lettre.DebutApresMidi - lettre.FinMatinee;
-                    lettre.HeuresSupplementaires = time.Hour-16.5;
-                    _genericRepository.Update(lettre);
-                    return Ok($"La pointage DebutApresMidi {lettre.DebutApresMidi} et Pause de {lettre.DureeDePause}" +
-                        $" et heur supp {lettre.HeuresSupplementaires} avec succès.");
-                }
-                else
-                {
-                    return Ok("No record Saved.");
-                }
                 
+                if (pointage.FinMatinee == null)
+                {
+                    return await HandleFinMatinee(pointage, currentTime);
+                }
+
+                if (pointage.DebutApresMidi == null && currentTime.Hour >= 13 && currentTime.Hour < 16.5)
+                {
+                    return await HandleDebutApresMidi(pointage, currentTime);
+                }
+
+                if (pointage.FinApresMidi == null)
+                {
+                    return await HandleFinApresMidi(pointage, currentTime);
+                }
+
+                return Ok("No record saved.");
             }
             catch (Exception ex)
             {
-
+                
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the person.");
             }
         }
+
+        // Helper methods for specific cases
+        private async Task<IActionResult> HandleFinMatinee(Pointage pointage, DateTime currentTime)
+        {
+            if (currentTime.Hour <= 12)
+            {
+                pointage.FinMatinee = currentTime.TimeOfDay;
+            }
+            else
+            {
+                pointage.FinMatinee = new TimeSpan(12, 0, 0);
+            }
+
+            await _genericRepository.Update(pointage);
+            return Ok("Pointage fin matinée enregistré avec succès.");
+        }
+
+        private async Task<IActionResult> HandleDebutApresMidi(Pointage pointage, DateTime currentTime)
+        {
+            pointage.DebutApresMidi = currentTime.TimeOfDay;
+            pointage.DureeDePause = pointage.DebutApresMidi - pointage.FinMatinee;
+
+            await _genericRepository.Update(pointage);
+            return Ok($"Pointage début après-midi enregistré ({pointage.DebutApresMidi}), pause de {pointage.DureeDePause}.");
+        }
+
+        private async Task<IActionResult> HandleFinApresMidi(Pointage pointage, DateTime currentTime)
+        {
+            if (currentTime.Hour > 16.5)
+            {
+                pointage.FinApresMidi = new TimeSpan(16, 30, 0);
+                pointage.HeuresSupplementaires = currentTime.Hour - 16.5;
+            }
+            else
+            {
+                pointage.FinApresMidi = currentTime.TimeOfDay;
+                pointage.HeuresSupplementaires = 0;
+            }
+
+            pointage.DureeDePause = pointage.DebutApresMidi - pointage.FinMatinee;
+            pointage.HeuresTotales = EmployeeServices.GetTotalHours(pointage);
+            await _genericRepository.Update(pointage);
+            return Ok($"Pointage fin après-midi enregistré ({pointage.FinApresMidi}), pause de {pointage.DureeDePause}, heures supplémentaires: {pointage.HeuresSupplementaires}.");
+        }
+
     }
 }

@@ -37,23 +37,6 @@ namespace GestionPaieApi.Models
         public double? HeuresSupplementaires { get; set; }
 
         
-        public double? HeuresTotales
-        {
-            get
-            {
-                if (DebutMatinee.HasValue && FinMatinee.HasValue && DebutApresMidi.HasValue && FinApresMidi.HasValue)
-                {
-                    TimeSpan matin = FinMatinee.Value - DebutMatinee.Value;
-                    TimeSpan apresMidi = FinApresMidi.Value - DebutApresMidi.Value;
-
-                    // Convert TimeSpan to total hours and add HeuresSupplementaires
-                    double totalHours = (matin + apresMidi - DureeDePause.GetValueOrDefault()).TotalHours;
-                    return totalHours + HeuresSupplementaires.GetValueOrDefault();
-                }
-
-                // Return null if any of the required times are missing
-                return null;
-            }
-        }
+        public double? HeuresTotales { get; set; }
     }
 }

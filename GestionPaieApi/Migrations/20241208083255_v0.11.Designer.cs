@@ -4,6 +4,7 @@ using GestionPaieApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionPaieApi.Migrations
 {
     [DbContext(typeof(Db_context))]
-    partial class Db_contextModelSnapshot : ModelSnapshot
+    [Migration("20241208083255_v0.11")]
+    partial class v011
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,9 +188,6 @@ namespace GestionPaieApi.Migrations
                         .HasColumnType("time");
 
                     b.Property<double?>("HeuresSupplementaires")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("HeuresTotales")
                         .HasColumnType("float");
 
                     b.HasKey("EmployeId", "Date");
