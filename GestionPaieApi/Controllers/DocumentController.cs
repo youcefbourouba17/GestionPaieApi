@@ -61,5 +61,24 @@ namespace GestionPaieApi.Controllers
             }
         }
 
+        [HttpGet("GetEmployeFA")]
+        public async Task<ActionResult<Employe>> GetEmployeFicheAttachemnt(String NSS)
+        {
+            try
+            {
+
+
+                var employe = await _genericRepository.GetByIdAsync(NSS);
+                if (employe == null)
+                {
+                    return NotFound("Aucun employé trouvé.");
+                }
+                return Ok(employe);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
+            }
+        }
     }
 }

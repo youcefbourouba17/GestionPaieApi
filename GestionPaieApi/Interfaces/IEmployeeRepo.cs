@@ -9,5 +9,7 @@ namespace GestionPaieApi.Interfaces
 
         Task<List<Employe>> SearchUsersAsync(string searchTerm);
         Task<bool> CheckUserAsync(string employeID);
+
+        Task<double> GetTotalWorkingDay(string employeID,int year,int month);
     }
 }

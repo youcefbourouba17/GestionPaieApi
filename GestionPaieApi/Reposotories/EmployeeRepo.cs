@@ -34,5 +34,26 @@ namespace GestionPaieApi.Reposotories
             return await _context.Employes.FindAsync(employeID) != null;
         }
 
+        public async Task<double> GetTotalWorkingDay(string employeID, int year, int month)
+        {
+            int daysInMonth = DateTime.DaysInMonth(year, month);
+            int totalWorkingHoursInMonth = daysInMonth switch
+            {
+                28 or 29 => 160, 
+                30 => 168,       
+                31 => 176,      
+                _ => 160         
+            };
+
+            var totalWorkedHours = await _context.Pointages
+                .Where(c => c.EmployeId == employeID &&
+                            c.Date.Year == year &&
+                            c.Date.Month == month)
+                .SumAsync(c => c.HeuresTotales ?? 0);
+
+            
+            return totalWorkedHours / totalWorkingHoursInMonth;
+        }
+
     }
 }

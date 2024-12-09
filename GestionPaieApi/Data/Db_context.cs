@@ -12,6 +12,7 @@ namespace GestionPaieApi.Data
         public DbSet<Employe> Employes { get; set; }
         public DbSet<ResponsabiliteAdministrative> ResponsabilitesAdministratives { get; set; }
         public DbSet<EmployeResponsabilites> EmployeResponsabilites { get; set; }
+        public DbSet<Pointage> Pointages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

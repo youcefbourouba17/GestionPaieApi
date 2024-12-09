@@ -14,5 +14,7 @@ namespace GestionPaieApi.Services
 
             return totalHoursWithoutSupp + (pointage.HeuresSupplementaires * 1.5);
         }
+
+        
     }
 }
