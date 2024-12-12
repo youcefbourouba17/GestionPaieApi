@@ -13,6 +13,7 @@ namespace GestionPaieApi.Data
         public DbSet<ResponsabiliteAdministrative> ResponsabilitesAdministratives { get; set; }
         public DbSet<EmployeResponsabilites> EmployeResponsabilites { get; set; }
         public DbSet<Pointage> Pointages { get; set; }
+        public DbSet<FicheAttachemnt> FicheAttachemnts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +37,14 @@ namespace GestionPaieApi.Data
             modelBuilder.Entity<ResponsabiliteAdministrative>()
             .HasIndex(e => e.NomResp)
             .IsUnique();
+
+            //// fiche attachemnt
+            modelBuilder.Entity<FicheAttachemnt>()
+                .HasKey(p => new { p.Month, p.Year,p.EmployeeID });
+            modelBuilder.Entity<FicheAttachemnt>()
+                .HasOne(f => f.Employe)
+                .WithMany() 
+                .HasForeignKey(f => f.EmployeeID);
 
 
 

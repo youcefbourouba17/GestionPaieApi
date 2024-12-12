@@ -28,7 +28,7 @@ namespace GestionPaieApi.Controllers
             try
             {
                 
-                if (!await _employeRepo.CheckUserAsync(employeeID))
+                if (!await _employeRepo.CheckEmployeeAsync(employeeID))
                 {
                     return NotFound("Employee ID wrong or doesn't exist");
                 }

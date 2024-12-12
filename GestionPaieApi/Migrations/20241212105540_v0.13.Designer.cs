@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionPaieApi.Migrations
 {
     [DbContext(typeof(Db_context))]
-    [Migration("20241205090049_v0.3")]
-    partial class v03
+    [Migration("20241212105540_v0.13")]
+    partial class v013
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,10 +77,6 @@ namespace GestionPaieApi.Migrations
                     b.Property<decimal?>("PrimeVariable")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<string>("ResponsabilitePrincipalID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Section")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -103,34 +99,137 @@ namespace GestionPaieApi.Migrations
 
             modelBuilder.Entity("GestionPaieApi.Models.EmployeResponsabilites", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("EmployeResponsabilitesId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeResponsabilitesId"));
 
                     b.Property<string>("EmployeID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("EmployeNSS")
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("ResponsabiliteID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.HasKey("EmployeResponsabilitesId");
 
                     b.HasIndex("EmployeID");
-
-                    b.HasIndex("EmployeNSS")
-                        .IsUnique()
-                        .HasFilter("[EmployeNSS] IS NOT NULL");
 
                     b.HasIndex("ResponsabiliteID");
 
                     b.ToTable("EmployeResponsabilites");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.FicheAttachemnt", b =>
+                {
+                    b.Property<int>("FaID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FaID"));
+
+                    b.Property<int>("AllocationFamiliale")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JourTravaillee")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Precarite")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PrimePers")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Remboursement")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("FaID");
+
+                    b.ToTable("FicheAttachemnts");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.LettreAccompagnee", b =>
+                {
+                    b.Property<int>("DemandeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DemandeId"));
+
+                    b.Property<string>("Commentaires")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("DateDemande")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EmployeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Raison")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Statut")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("TypeChangement")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("DemandeId");
+
+                    b.HasIndex("EmployeId");
+
+                    b.ToTable("LettreAccompagnee");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.Pointage", b =>
+                {
+                    b.Property<string>("EmployeId")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan?>("DebutApresMidi")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("DebutMatinee")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("DureeDePause")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("FinApresMidi")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("FinMatinee")
+                        .HasColumnType("time");
+
+                    b.Property<double?>("HeuresSupplementaires")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("HeuresTotales")
+                        .HasColumnType("float");
+
+                    b.HasKey("EmployeId", "Date");
+
+                    b.ToTable("Pointages");
                 });
 
             modelBuilder.Entity("GestionPaieApi.Models.ResponsabiliteAdministrative", b =>
@@ -164,10 +263,6 @@ namespace GestionPaieApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GestionPaieApi.Models.Employe", null)
-                        .WithOne("ResponsabilitePrincipal")
-                        .HasForeignKey("GestionPaieApi.Models.EmployeResponsabilites", "EmployeNSS");
-
                     b.HasOne("GestionPaieApi.Models.ResponsabiliteAdministrative", "Responsabilite")
                         .WithMany("EmployeResponsabilites")
                         .HasForeignKey("ResponsabiliteID")
@@ -179,12 +274,33 @@ namespace GestionPaieApi.Migrations
                     b.Navigation("Responsabilite");
                 });
 
+            modelBuilder.Entity("GestionPaieApi.Models.LettreAccompagnee", b =>
+                {
+                    b.HasOne("GestionPaieApi.Models.Employe", "Employe")
+                        .WithMany("DemandesChangements")
+                        .HasForeignKey("EmployeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employe");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.Pointage", b =>
+                {
+                    b.HasOne("GestionPaieApi.Models.Employe", "Employe")
+                        .WithMany()
+                        .HasForeignKey("EmployeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employe");
+                });
+
             modelBuilder.Entity("GestionPaieApi.Models.Employe", b =>
                 {
-                    b.Navigation("EmployeResponsabilites");
+                    b.Navigation("DemandesChangements");
 
-                    b.Navigation("ResponsabilitePrincipal")
-                        .IsRequired();
+                    b.Navigation("EmployeResponsabilites");
                 });
 
             modelBuilder.Entity("GestionPaieApi.Models.ResponsabiliteAdministrative", b =>

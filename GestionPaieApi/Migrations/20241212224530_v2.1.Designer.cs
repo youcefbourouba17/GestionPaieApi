@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionPaieApi.Migrations
 {
     [DbContext(typeof(Db_context))]
-    [Migration("20241204221341_v0.1")]
-    partial class v01
+    [Migration("20241212224530_v2.1")]
+    partial class v21
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,6 +69,9 @@ namespace GestionPaieApi.Migrations
                     b.Property<int?>("NombreEnfants")
                         .HasColumnType("int");
 
+                    b.Property<int>("Precarite")
+                        .HasColumnType("int");
+
                     b.Property<string>("Prenom")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -99,11 +102,11 @@ namespace GestionPaieApi.Migrations
 
             modelBuilder.Entity("GestionPaieApi.Models.EmployeResponsabilites", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("EmployeResponsabilitesId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeResponsabilitesId"));
 
                     b.Property<string>("EmployeID")
                         .IsRequired()
@@ -113,13 +116,127 @@ namespace GestionPaieApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.HasKey("EmployeResponsabilitesId");
 
                     b.HasIndex("EmployeID");
 
                     b.HasIndex("ResponsabiliteID");
 
                     b.ToTable("EmployeResponsabilites");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.FicheAttachemnt", b =>
+                {
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AllocationFamiliale")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("FaID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FaID"));
+
+                    b.Property<int>("JourTravaillee")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NomEtPrenom")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Remboursement")
+                        .HasColumnType("float");
+
+                    b.HasKey("Month", "Year");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("FicheAttachemnts");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.LettreAccompagnee", b =>
+                {
+                    b.Property<int>("DemandeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DemandeId"));
+
+                    b.Property<string>("Commentaires")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("DateDemande")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EmployeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Raison")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Statut")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("TypeChangement")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("DemandeId");
+
+                    b.HasIndex("EmployeId");
+
+                    b.ToTable("LettreAccompagnee");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.Pointage", b =>
+                {
+                    b.Property<string>("EmployeId")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan?>("DebutApresMidi")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("DebutMatinee")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("DureeDePause")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("FinApresMidi")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("FinMatinee")
+                        .HasColumnType("time");
+
+                    b.Property<double?>("HeuresSupplementaires")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("HeuresTotales")
+                        .HasColumnType("float");
+
+                    b.HasKey("EmployeId", "Date");
+
+                    b.ToTable("Pointages");
                 });
 
             modelBuilder.Entity("GestionPaieApi.Models.ResponsabiliteAdministrative", b =>
@@ -164,8 +281,43 @@ namespace GestionPaieApi.Migrations
                     b.Navigation("Responsabilite");
                 });
 
+            modelBuilder.Entity("GestionPaieApi.Models.FicheAttachemnt", b =>
+                {
+                    b.HasOne("GestionPaieApi.Models.Employe", "Employe")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employe");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.LettreAccompagnee", b =>
+                {
+                    b.HasOne("GestionPaieApi.Models.Employe", "Employe")
+                        .WithMany("DemandesChangements")
+                        .HasForeignKey("EmployeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employe");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.Pointage", b =>
+                {
+                    b.HasOne("GestionPaieApi.Models.Employe", "Employe")
+                        .WithMany()
+                        .HasForeignKey("EmployeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employe");
+                });
+
             modelBuilder.Entity("GestionPaieApi.Models.Employe", b =>
                 {
+                    b.Navigation("DemandesChangements");
+
                     b.Navigation("EmployeResponsabilites");
                 });
 

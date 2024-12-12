@@ -36,6 +36,7 @@ namespace GestionPaieApi.Models
         [MaxLength(50)]
         public string Grade { get; set; }
 
+        [Range(0,15, ErrorMessage = "wch equipe ta3 foot ?.")]
         public int? NombreEnfants { get; set; }
 
         [MaxLength(50)]

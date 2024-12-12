@@ -10,16 +10,25 @@ namespace GestionPaieApi.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int FaID { get; set; }
 
+
+        public string NomEtPrenom { get; set; }
+
+        [ForeignKey("EmployeeID")]
+        public string EmployeeID { get; set; }
+        public Employe Employe { get; set; }
         [Required]
         public int JourTravaillee { get; set; }
-        public int PrimePers { get; set; }
-        public PrecariteType Precarite { get; set; }
 
-        public int AllocationFamiliale { get; set; }
+        
+
+        public int? AllocationFamiliale { get; set; }
 
         public double Remboursement { get; set; }
 
         public int Month {  get; set; }
         public int Year {  get; set; }
+        public int PRI;
+
+        public int PRC;
     }
 }

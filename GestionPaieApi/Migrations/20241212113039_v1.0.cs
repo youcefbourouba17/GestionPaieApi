@@ -5,24 +5,25 @@
 namespace GestionPaieApi.Migrations
 {
     /// <inheritdoc />
-    public partial class v012 : Migration
+    public partial class v10 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<double>(
-                name: "HeuresTotales",
-                table: "Pointage",
-                type: "float",
-                nullable: true);
+            migrationBuilder.AddColumn<string>(
+                name: "NomEtPrenom",
+                table: "FicheAttachemnts",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "HeuresTotales",
-                table: "Pointage");
+                name: "NomEtPrenom",
+                table: "FicheAttachemnts");
         }
     }
 }

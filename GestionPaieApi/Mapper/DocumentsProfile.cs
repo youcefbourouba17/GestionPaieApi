@@ -9,6 +9,9 @@ namespace GestionPaieApi.Mapper
         public DocumentsProfile() {
             CreateMap<LettreAccompagnee, LettreAccompagneeDto>();
             CreateMap<LettreAccompagneeDto, LettreAccompagnee>();
+
+            CreateMap<FicheAttachemnt, FicheAttachemntDTO>();
+            CreateMap<FicheAttachemntDTO, FicheAttachemnt>();
         }
         
     }

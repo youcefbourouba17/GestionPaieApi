@@ -86,6 +86,7 @@ namespace GestionPaieApi.Data
                         FonctionPrincipale = "Responsable de Projet",
                         Grade = "Cadre",
                         NombreEnfants = 2,
+                        Precarite= PrecariteType.CDD,
                         Categorie = "Gestion",
                         Section = "Direction de Projet",
                         TauxIndemniteNuisance = 10.5m,
@@ -105,6 +106,7 @@ namespace GestionPaieApi.Data
                         FonctionPrincipale = "Chef de Département",
                         Grade = "Manager",
                         NombreEnfants = 0,
+                        Precarite= PrecariteType.CDI,
                         Categorie = "Administratif",
                         Section = "Ressources Humaines",
                         TauxIndemniteNuisance = 8.5m,
@@ -147,6 +149,41 @@ namespace GestionPaieApi.Data
                 };
 
                 context.EmployeResponsabilites.AddRange(employeResponsibilities);
+                context.SaveChanges();
+            }
+            if (!context.FicheAttachemnts.Any())
+            {
+                var ficheAttachemnts = new List<FicheAttachemnt>
+                {
+                    new FicheAttachemnt
+                    {
+                        JourTravaillee = 20,
+                        
+                        NomEtPrenom="Bouzid Ahmed",
+                        EmployeeID="1234567890",
+                        PRC=28,
+                        PRI=8,
+                        AllocationFamiliale = 100,
+                        Remboursement = 150.0,
+                        Month = 11,
+                        Year = 2024
+                    },
+                    new FicheAttachemnt
+                    {
+                        JourTravaillee = 22,
+                        NomEtPrenom="Mebarki Sofia",
+                        PRC=18,
+                        PRI=5,
+                        EmployeeID="2345678901",
+                        AllocationFamiliale = 150,
+                        Remboursement = 200.5,
+                        Month = 12,
+                        Year = 2024
+                    }
+                    
+                };
+
+                context.FicheAttachemnts.AddRange(ficheAttachemnts);
                 context.SaveChanges();
             }
         }

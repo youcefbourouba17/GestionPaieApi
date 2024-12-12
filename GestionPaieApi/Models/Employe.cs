@@ -51,6 +51,7 @@ namespace GestionPaieApi.Models
 
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? PrimeVariable { get; set; }
+        public PrecariteType Precarite { get; set; }
 
         // Navigation property for responsibilities
         public ICollection<EmployeResponsabilites> EmployeResponsabilites { get; set; } = new List<EmployeResponsabilites>();

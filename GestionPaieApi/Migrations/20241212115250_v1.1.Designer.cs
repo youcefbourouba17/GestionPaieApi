@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionPaieApi.Migrations
 {
     [DbContext(typeof(Db_context))]
-    [Migration("20241207222332_v0.7")]
-    partial class v07
+    [Migration("20241212115250_v1.1")]
+    partial class v11
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,6 +122,53 @@ namespace GestionPaieApi.Migrations
                     b.ToTable("EmployeResponsabilites");
                 });
 
+            modelBuilder.Entity("GestionPaieApi.Models.FicheAttachemnt", b =>
+                {
+                    b.Property<int>("FaID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FaID"));
+
+                    b.Property<int>("AllocationFamiliale")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeNSS")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("JourTravaillee")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NomEtPrenom")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Precarite")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PrimePers")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Remboursement")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("FaID");
+
+                    b.HasIndex("EmployeNSS");
+
+                    b.ToTable("FicheAttachemnts");
+                });
+
             modelBuilder.Entity("GestionPaieApi.Models.LettreAccompagnee", b =>
                 {
                     b.Property<int>("DemandeId")
@@ -173,32 +220,29 @@ namespace GestionPaieApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<TimeSpan?>("DebutApresMidi")
-                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("DebutMatinee")
-                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("DureeDePause")
-                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("FinApresMidi")
-                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("FinMatinee")
-                        .IsRequired()
                         .HasColumnType("time");
 
                     b.Property<double?>("HeuresSupplementaires")
-                        .IsRequired()
+                        .HasColumnType("float");
+
+                    b.Property<double?>("HeuresTotales")
                         .HasColumnType("float");
 
                     b.HasKey("EmployeId", "Date");
 
-                    b.ToTable("Pointage");
+                    b.ToTable("Pointages");
                 });
 
             modelBuilder.Entity("GestionPaieApi.Models.ResponsabiliteAdministrative", b =>
@@ -241,6 +285,15 @@ namespace GestionPaieApi.Migrations
                     b.Navigation("Employe");
 
                     b.Navigation("Responsabilite");
+                });
+
+            modelBuilder.Entity("GestionPaieApi.Models.FicheAttachemnt", b =>
+                {
+                    b.HasOne("GestionPaieApi.Models.Employe", "Employe")
+                        .WithMany()
+                        .HasForeignKey("EmployeNSS");
+
+                    b.Navigation("Employe");
                 });
 
             modelBuilder.Entity("GestionPaieApi.Models.LettreAccompagnee", b =>

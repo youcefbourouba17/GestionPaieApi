@@ -8,6 +8,7 @@ using GestionPaieApi.Reposotories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 
 namespace GestionPaieApi.Controllers
 {
@@ -27,13 +28,13 @@ namespace GestionPaieApi.Controllers
             _employeRepo=employeRepo;
             _context = context;
         }
-
+        #region CRUD EMployee
         [HttpPost("CreateEmploye")]
         public async Task<IActionResult> CreateEmploye([FromBody] EmployeEditDto employeDto)
         {
             try
             {
-                
+
 
                 var employe = _mapper.Map<Employe>(employeDto);
                 var resposabilities = await _context.ResponsabilitesAdministratives
@@ -84,13 +85,13 @@ namespace GestionPaieApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while updating the employee: {ex.Message}");
             }
         }
-    
+
         [HttpGet("GetAllEmployes")]
         public async Task<ActionResult<ICollection<Employe>>> GetAllEmployee()
         {
             try
             {
-               
+
 
                 var employeList = _mapper.Map<List<EmployeDisplayDto>>(await _genericRepository.GetAllAsync());
 
@@ -106,25 +107,10 @@ namespace GestionPaieApi.Controllers
             }
         }
 
-        [HttpGet("GetEmployeByID")]
-        public async Task<ActionResult<Employe>> GetEmployeByID(String NSS)
-        {
-            try
-            {
+        
+        #endregion
 
-
-                var employe= await _genericRepository.GetByIdAsync(NSS);
-                if (employe==null)
-                {
-                    return NotFound("Aucun employé trouvé.");
-                }
-                return Ok(employe);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
-            }
-        }
+        #region Search By ID
 
         [HttpGet("GetEmployeeResponsabilitiesByID")]
         public async Task<ActionResult<Employe>> GetEmployeResponsibiliesByID(String NSS)
@@ -145,8 +131,29 @@ namespace GestionPaieApi.Controllers
                 return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
             }
         }
+        [HttpGet("GetEmployeByID")]
+        public async Task<ActionResult<Employe>> GetEmployeByID(String NSS)
+        {
+            try
+            {
 
-        [HttpGet("GetFilter")]
+
+                var employe = await _genericRepository.GetByIdAsync(NSS);
+                if (employe == null)
+                {
+                    return NotFound("Aucun employé trouvé.");
+                }
+                return Ok(employe);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
+            }
+        }
+        #endregion
+
+        #region FILTER
+        [HttpGet("FilterByID")]
         public async Task<ActionResult<Employe>> GetFilterBy(String searchTerm)
         {
             try
@@ -165,6 +172,30 @@ namespace GestionPaieApi.Controllers
                 return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
             }
         }
+        [HttpGet("GetUnattachedEmployeeFiche")]
+        public async Task<ActionResult<List<EmployeDisplayDto>>> GetAllUnattachedEmployeeFiche(int month, int year)
+        {
+            try
+            {
+                var employe =await  _employeRepo.GetUntachmntEmployeeFiche(month,year);
+                if (employe == null)
+                {
+                    return NotFound("Aucun Employee trouvé.");
+                }
+                var employeDTO = _mapper.Map < List < EmployeDisplayDto >> (employe);
+                
+                return Ok(employeDTO);
+            }
+            catch (Exception ex )
+            {
+
+                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
+            }
+            
+            
+        }
+        #endregion
+
 
 
 

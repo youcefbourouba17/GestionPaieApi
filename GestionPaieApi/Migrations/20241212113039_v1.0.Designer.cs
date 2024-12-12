@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionPaieApi.Migrations
 {
     [DbContext(typeof(Db_context))]
-    [Migration("20241208083255_v0.11")]
-    partial class v011
+    [Migration("20241212113039_v1.0")]
+    partial class v10
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,6 +122,44 @@ namespace GestionPaieApi.Migrations
                     b.ToTable("EmployeResponsabilites");
                 });
 
+            modelBuilder.Entity("GestionPaieApi.Models.FicheAttachemnt", b =>
+                {
+                    b.Property<int>("FaID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FaID"));
+
+                    b.Property<int>("AllocationFamiliale")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JourTravaillee")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NomEtPrenom")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Precarite")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PrimePers")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Remboursement")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("FaID");
+
+                    b.ToTable("FicheAttachemnts");
+                });
+
             modelBuilder.Entity("GestionPaieApi.Models.LettreAccompagnee", b =>
                 {
                     b.Property<int>("DemandeId")
@@ -190,9 +228,12 @@ namespace GestionPaieApi.Migrations
                     b.Property<double?>("HeuresSupplementaires")
                         .HasColumnType("float");
 
+                    b.Property<double?>("HeuresTotales")
+                        .HasColumnType("float");
+
                     b.HasKey("EmployeId", "Date");
 
-                    b.ToTable("Pointage");
+                    b.ToTable("Pointages");
                 });
 
             modelBuilder.Entity("GestionPaieApi.Models.ResponsabiliteAdministrative", b =>
