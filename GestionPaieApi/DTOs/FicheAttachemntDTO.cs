@@ -5,7 +5,8 @@ namespace GestionPaieApi.DTOs
 {
     public class FicheAttachemntDTO
     {
-        
+        public int? FaID { get; set; } = null;
+
         public string EmployeeID { get; set; }
         public double Remboursement { get; set; }
         [Range(1, 12, ErrorMessage = "Month must be between 1 and 12.")]

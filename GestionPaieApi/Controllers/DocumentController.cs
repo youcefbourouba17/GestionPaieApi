@@ -4,6 +4,7 @@ using GestionPaieApi.DTOs;
 using GestionPaieApi.Interfaces;
 using GestionPaieApi.Models;
 using GestionPaieApi.Repositories;
+using GestionPaieApi.Reposotories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -30,25 +31,7 @@ namespace GestionPaieApi.Controllers
             _context = context;
         }
 
-        
-
-        [HttpPost("PostDemendeChangemnt")]
-        public async Task<IActionResult> Post([FromBody] LettreAccompagneeDto lettreDto)
-        {
-
-            try
-            {
-                var lettre = _mapper.Map < LettreAccompagnee >(lettreDto);
-                await _genericRepository.AddAsync(lettre);
-                return Ok("La lettre a été ajoutée avec succès.");
-            }
-            catch (Exception ex)
-            {
-                
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the person.");
-            }
-        }
-
+        #region Get
         [HttpGet("GetEmployeSignaletiqueByID")]
         public async Task<ActionResult<Employe>> GetEmployeSignaletique(String NSS)
         {
@@ -77,7 +60,7 @@ namespace GestionPaieApi.Controllers
 
 
                 var ficheAttachemnts = await _context.FicheAttachemnts.Where(c => c.Month == month &&
-                                    c.Year==year)
+                                    c.Year == year)
                                      .ToListAsync();
                 if (ficheAttachemnts == null)
                 {
@@ -90,6 +73,28 @@ namespace GestionPaieApi.Controllers
                 return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
             }
         }
+        #endregion
+
+
+        #region Post
+        [HttpPost("PostDemendeChangemnt")]
+        public async Task<IActionResult> Post([FromBody] LettreAccompagneeDto lettreDto)
+        {
+
+            try
+            {
+                var lettre = _mapper.Map<LettreAccompagnee>(lettreDto);
+                await _genericRepository.AddAsync(lettre);
+                return Ok("La lettre a été ajoutée avec succès.");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the person.");
+            }
+        }
+
+
 
         [HttpPost("PostEmployeFA")]
         public async Task<IActionResult> PostEmployeFicheAttachemnt(FicheAttachemntDTO ficheAttachemntDTO)
@@ -97,28 +102,143 @@ namespace GestionPaieApi.Controllers
             try
             {
                 var employee = await _employeRepo.GetEmployeeByID(ficheAttachemntDTO.EmployeeID);
-                if (employee==null)
+                if (employee == null)
                 {
                     return NotFound("employee doesnt exist.");
                 }
                 var ficheAttache = _mapper.Map<FicheAttachemnt>(ficheAttachemntDTO);
                 ficheAttache.NomEtPrenom = $"{employee.Nom} {employee.Prenom}";
-                
+
                 ficheAttache.AllocationFamiliale = employee.NombreEnfants;
                 if (_context.FicheAttachemnts.Contains(ficheAttache))
                 {
                     return StatusCode(500, $"Fiche Employee ALready exist , try to edit it ");
                 }
                 await _context.FicheAttachemnts.AddAsync(ficheAttache);
-               
+
                 _context.SaveChanges();
                 return Ok("saved");
-                
+
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
             }
         }
+        #endregion
+
+
+        #region Edit
+        [HttpPut("EditLettreAccompagnee")]
+        public async Task<IActionResult> EditLettreAccompagnee([FromBody] LettreAccompagneeDto lettre)
+        {
+
+            if (lettre.DemandId==null)
+            {
+                return NotFound("Lettre accompagnée ID is null.");
+            }
+            try
+            {
+                var existingLettre = await _genericRepository.GetByIdAsync(lettre.DemandId);
+                if (existingLettre == null)
+                    return NotFound("Lettre accompagnée introuvable.");
+
+                _mapper.Map(lettre, existingLettre); 
+                await _genericRepository.Update(existingLettre);
+
+                return Ok(new { Message = "Lettre accompagnée mise à jour avec succès." });
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Une erreur est survenue lors de la mise à jour de la lettre accompagnée.");
+            }
+        }
+
+
+        [HttpPut("EditEmployeFA")]
+        public async Task<IActionResult> EditEmployeFicheAttachement(FicheAttachemntDTO ficheAttachemntDTO)
+        {
+            if (ficheAttachemntDTO.FaID == null)
+                return BadRequest("Fiche Attachement ID is required.");
+
+            if (!ModelState.IsValid)
+                return BadRequest("Invalid data provided.");
+
+            var employee = await _employeRepo.GetEmployeeByID(ficheAttachemntDTO.EmployeeID);
+            if (employee == null)
+                return NotFound("Employee doesn't exist.");
+
+            var fiche = await _context.FicheAttachemnts
+                                      .FirstOrDefaultAsync(f => f.FaID == ficheAttachemntDTO.FaID);
+            if (fiche == null)
+                return NotFound("Fiche attachement not found.");
+
+            
+            _mapper.Map(ficheAttachemntDTO, fiche);
+
+            
+            fiche.NomEtPrenom = $"{employee.Nom} {employee.Prenom}";
+            fiche.AllocationFamiliale = employee.NombreEnfants;
+
+            
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok("Fiche updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while updating the fiche attachement,{ex.Message} ");
+            }
+        }
+
+
+
+
+        #endregion
+
+
+        #region Delete
+        [HttpDelete("DeleteFicheAttachemnt/{id}")]
+        public async Task<IActionResult> DeleteFicheAttachemnt(int id)
+        {
+            try
+            {
+                var fiche = await _context.FicheAttachemnts.FirstOrDefaultAsync(f => f.FaID == id);
+                if (fiche == null)
+                    return NotFound("Fiche attachement not found.");
+
+                _context.FicheAttachemnts.Remove(fiche);
+                await _context.SaveChangesAsync();
+
+                return Ok("Fiche attachement deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the fiche attachement: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("DeleteLettreAccompagnee/{id}")]
+        public async Task<IActionResult> DeleteLettreAccompagnee(int id)
+        {
+            try
+            {
+                var lettre = await _genericRepository.GetByIdAsync(id);
+                if (lettre == null)
+                    return NotFound("Lettre accompagnée not found.");
+
+                await _genericRepository.Delete(lettre);
+                return Ok("Lettre accompagnée deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the lettre accompagnée: {ex.Message}");
+            }
+        }
+        #endregion
+
     }
 }

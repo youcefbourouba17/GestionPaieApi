@@ -46,15 +46,15 @@ namespace GestionPaieApi.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(int? id)
         {
             return await _dbSet.FindAsync(id); 
         }
-        public async Task<T> GetByIdAsync(string id)
+        public async Task<T?> GetByIdAsync(string? id)
         {
             return await _dbSet.FindAsync(id);
         }
-        public async Task<T> GetByIdAsync(string id,DateTime date)
+        public async Task<T?> GetByIdAsync(string id,DateTime date)
         {
             return await _dbSet.FindAsync(id,date);
         }
