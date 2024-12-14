@@ -40,6 +40,7 @@ namespace GestionPaieApi.Controllers
 
 
                 var employe = await _employeRepo.GetEmployeeByID(NSS);
+                
                 if (employe == null)
                 {
                     return NotFound("Aucun employé trouvé.");
@@ -51,7 +52,7 @@ namespace GestionPaieApi.Controllers
                 return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
             }
         }
-
+        // todo--: zid PRI w PRC
         [HttpGet("GetEmployeFA")]
         public async Task<ActionResult<Employe>> GetEmployeFicheAttachemnt(int month, int year)
         {
@@ -130,16 +131,13 @@ namespace GestionPaieApi.Controllers
 
         #region Edit
         [HttpPut("EditLettreAccompagnee")]
-        public async Task<IActionResult> EditLettreAccompagnee([FromBody] LettreAccompagneeDto lettre)
+        public async Task<IActionResult> EditLettreAccompagnee([FromBody] LettreAccompagneeDto lettre, int lettreID)
         {
 
-            if (lettre.DemandId==null)
-            {
-                return NotFound("Lettre accompagnée ID is null.");
-            }
+            
             try
             {
-                var existingLettre = await _genericRepository.GetByIdAsync(lettre.DemandId);
+                var existingLettre = await _genericRepository.GetByIdAsync(lettreID);
                 if (existingLettre == null)
                     return NotFound("Lettre accompagnée introuvable.");
 
@@ -158,20 +156,15 @@ namespace GestionPaieApi.Controllers
 
 
         [HttpPut("EditEmployeFA")]
-        public async Task<IActionResult> EditEmployeFicheAttachement(FicheAttachemntDTO ficheAttachemntDTO)
+        public async Task<IActionResult> EditEmployeFicheAttachement(FicheAttachemntDTO ficheAttachemntDTO,int faID)
         {
-            if (ficheAttachemntDTO.FaID == null)
-                return BadRequest("Fiche Attachement ID is required.");
-
-            if (!ModelState.IsValid)
-                return BadRequest("Invalid data provided.");
 
             var employee = await _employeRepo.GetEmployeeByID(ficheAttachemntDTO.EmployeeID);
             if (employee == null)
                 return NotFound("Employee doesn't exist.");
 
             var fiche = await _context.FicheAttachemnts
-                                      .FirstOrDefaultAsync(f => f.FaID == ficheAttachemntDTO.FaID);
+                                      .FirstOrDefaultAsync(f => f.FaID == faID);
             if (fiche == null)
                 return NotFound("Fiche attachement not found.");
 

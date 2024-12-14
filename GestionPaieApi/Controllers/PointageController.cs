@@ -34,7 +34,7 @@ namespace GestionPaieApi.Controllers
                 }
 
                 
-                var currentTime = DateTime.Today.Add(new TimeSpan(18,04, 0));
+                var currentTime = DateTime.Today.Add(new TimeSpan(16,54, 0));
                 var currentDate = currentTime.Date;
 
                 
@@ -114,6 +114,7 @@ namespace GestionPaieApi.Controllers
         {
             if (currentTime.Hour > 16.5)
             {
+                
                 pointage.FinApresMidi = new TimeSpan(16, 30, 0);
                 pointage.HeuresSupplementaires = currentTime.Hour - 16.5;
             }

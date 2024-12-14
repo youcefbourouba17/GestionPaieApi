@@ -10,7 +10,9 @@ namespace GestionPaieApi.Interfaces
         Task<List<Employe>> SearchUsersAsync(string searchTerm);
         Task<bool> CheckEmployeeAsync(string employeID);
         Task<Employe> GetEmployeeByID(string employeID);
+        Task<Employe> GetEmployeeByIDFull(string employeID);
 
+        // todo -- 3ytlha f fich attachemnt controler
         Task<double> GetTotalWorkingDay(string employeID,int year,int month);
 
 

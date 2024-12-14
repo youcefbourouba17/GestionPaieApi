@@ -21,21 +21,119 @@ namespace GestionPaieApi.Controllers
         private readonly IEmployeeRepo _employeRepo;
         private readonly Db_context _context;
 
-        public EmployeController(GenericRepository<Employe> genericRepository,IMapper mapper, IEmployeeRepo employeRepo,Db_context context)
+        public EmployeController(GenericRepository<Employe> genericRepository, IMapper mapper, IEmployeeRepo employeRepo, Db_context context)
         {
-            _genericRepository=genericRepository;
+            _genericRepository = genericRepository;
             _mapper = mapper;
-            _employeRepo=employeRepo;
+            _employeRepo = employeRepo;
             _context = context;
         }
-        #region CRUD EMployee
+
+        #region GET Methods
+
+        [HttpGet("GetAllEmployes")]
+        public async Task<ActionResult<ICollection<Employe>>> GetAllEmployee()
+        {
+            try
+            {
+                var v1 = await _genericRepository.GetAllAsync();
+                var employeList = _mapper.Map<List<EmployeDisplayDto>>(v1);
+
+                if (employeList.IsNullOrEmpty())
+                {
+                    return NotFound("Aucun employé trouvé.");
+                }
+                return Ok(employeList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetEmployeeResponsabilitiesByID")]
+        public async Task<ActionResult<Employe>> GetEmployeResponsibiliesByID(string NSS)
+        {
+            try
+            {
+                var employe = await _employeRepo.GetEmployeeResponsabilitiesByID(NSS);
+                if (employe == null)
+                {
+                    return NotFound("Aucun Responsibilies trouvé.");
+                }
+                return Ok(employe);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetEmployeByID")]
+        public async Task<ActionResult<Employe>> GetEmployeByID(string NSS)
+        {
+            try
+            {
+                var employe = await _genericRepository.GetByIdAsync(NSS);
+                if (employe == null)
+                {
+                    return NotFound("Aucun employé trouvé.");
+                }
+                return Ok(employe);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
+            }
+        }
+
+        [HttpGet("FilterByID")]
+        public async Task<ActionResult<Employe>> GetFilterBy(string searchTerm)
+        {
+            try
+            {
+                var employe = _mapper.Map<List<EmployeDisplayDto>>(await _employeRepo.SearchUsersAsync(searchTerm));
+                if (employe == null)
+                {
+                    return NotFound("Aucun Employee trouvé.");
+                }
+                return Ok(employe);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetUnattachedEmployeeFiche")]
+        public async Task<ActionResult<List<EmployeDisplayDto>>> GetAllUnattachedEmployeeFiche(int month, int year)
+        {
+            try
+            {
+                var employe = await _employeRepo.GetUntachmntEmployeeFiche(month, year);
+                if (employe == null)
+                {
+                    return NotFound("Aucun Employee trouvé.");
+                }
+                var employeDTO = _mapper.Map<List<EmployeDisplayDto>>(employe);
+
+                return Ok(employeDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        #region POST Methods
+
         [HttpPost("CreateEmploye")]
         public async Task<IActionResult> CreateEmploye([FromBody] EmployeEditDto employeDto)
         {
             try
             {
-
-
                 var employe = _mapper.Map<Employe>(employeDto);
                 var resposabilities = await _context.ResponsabilitesAdministratives
                             .Where(er => employeDto.EmployeResponsabilites.Contains(er.ResponsabiliteID))
@@ -48,7 +146,6 @@ namespace GestionPaieApi.Controllers
                         EmployeID = employeDto.NSS,
                         ResponsabiliteID = item.ResponsabiliteID
                     });
-
                 }
                 // Save to repository
                 await _genericRepository.AddAsync(employe);
@@ -61,15 +158,19 @@ namespace GestionPaieApi.Controllers
             }
         }
 
-        [HttpPut("EditEmploye/{id}")]
-        public async Task<IActionResult> EditEmploye(string id, [FromBody] EmployeEditDto employeDto)
+        #endregion
+
+        #region PUT Methods
+        // todo-- djib klch w dir update
+        [HttpPut("EditEmploye")]
+        public async Task<IActionResult> EditEmploye([FromBody] EmployeEditDto employeDto)
         {
             try
             {
-                var employe = await _genericRepository.GetByIdAsync(id);
+                var employe = await _employeRepo.GetEmployeeByIDFull(employeDto.NSS);
                 if (employe == null)
                 {
-                    return NotFound($"Employe with ID {id} not found.");
+                    return NotFound($"Employe with ID {employeDto.NSS} not found.");
                 }
 
                 // Map the DTO to the entity
@@ -86,118 +187,38 @@ namespace GestionPaieApi.Controllers
             }
         }
 
-        [HttpGet("GetAllEmployes")]
-        public async Task<ActionResult<ICollection<Employe>>> GetAllEmployee()
-        {
-            try
-            {
-
-
-                var employeList = _mapper.Map<List<EmployeDisplayDto>>(await _genericRepository.GetAllAsync());
-
-                if (employeList.IsNullOrEmpty())
-                {
-                    return NotFound("Aucun employé trouvé.");
-                }
-                return Ok(employeList);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
-            }
-        }
-
-        
         #endregion
 
-        #region Search By ID
-
-        [HttpGet("GetEmployeeResponsabilitiesByID")]
-        public async Task<ActionResult<Employe>> GetEmployeResponsibiliesByID(String NSS)
+        #region DELETE Method
+        [HttpDelete("DeleteEmploye")]
+        public async Task<IActionResult> DeleteEmploye(string nss)
         {
             try
             {
-
-
-                var employe = await _employeRepo.GetEmployeeResponsabilitiesByID(NSS);
+               
+                var employe = await _genericRepository.GetByIdAsync(nss);
                 if (employe == null)
                 {
-                    return NotFound("Aucun Responsibilies trouvé.");
+                    return NotFound($"Employee with NSS {nss} not found.");
                 }
-                return Ok(employe);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
-            }
-        }
-        [HttpGet("GetEmployeByID")]
-        public async Task<ActionResult<Employe>> GetEmployeByID(String NSS)
-        {
-            try
-            {
 
-
-                var employe = await _genericRepository.GetByIdAsync(NSS);
-                if (employe == null)
-                {
-                    return NotFound("Aucun employé trouvé.");
-                }
-                return Ok(employe);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
-            }
-        }
-        #endregion
-
-        #region FILTER
-        [HttpGet("FilterByID")]
-        public async Task<ActionResult<Employe>> GetFilterBy(String searchTerm)
-        {
-            try
-            {
-
-
-                var employe = _mapper.Map<List<EmployeDisplayDto>>(await _employeRepo.SearchUsersAsync(searchTerm));
-                if (employe == null)
-                {
-                    return NotFound("Aucun Employee trouvé.");
-                }
-                return Ok(employe);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
-            }
-        }
-        [HttpGet("GetUnattachedEmployeeFiche")]
-        public async Task<ActionResult<List<EmployeDisplayDto>>> GetAllUnattachedEmployeeFiche(int month, int year)
-        {
-            try
-            {
-                var employe =await  _employeRepo.GetUntachmntEmployeeFiche(month,year);
-                if (employe == null)
-                {
-                    return NotFound("Aucun Employee trouvé.");
-                }
-                var employeDTO = _mapper.Map < List < EmployeDisplayDto >> (employe);
                 
-                return Ok(employeDTO);
+                var responsibilities = await _context.EmployeResponsabilites
+                                                    .Where(er => er.EmployeID == nss)
+                                                    .ToListAsync();
+                _context.EmployeResponsabilites.RemoveRange(responsibilities);
+
+                
+                await _genericRepository.Delete(employe);
+
+                return Ok("Employee deleted successfully.");
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
-
-                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while deleting the employee: {ex.Message}");
             }
-            
-            
         }
+
         #endregion
-
-
-
-
     }
 }

@@ -36,7 +36,7 @@ namespace GestionPaieApi.Models
         
         public double? HeuresSupplementaires { get; set; }
 
-        
-        public double? HeuresTotales { get; set; }
+
+        public double? HeuresTotales { get; set; };
     }
 }

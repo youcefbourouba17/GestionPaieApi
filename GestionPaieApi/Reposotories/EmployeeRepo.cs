@@ -35,8 +35,27 @@ namespace GestionPaieApi.Reposotories
         }
         public async Task<Employe?> GetEmployeeByID(string employeID)
         {
-            return await _context.Employes.FindAsync(employeID);
+            return await _context.Employes
+                .FindAsync(employeID);
         }
+        public async Task<Employe> GetEmployeeByIDFull(string employeID)
+        {
+            try
+            {
+                
+                var employe = await _context.Employes
+                    .Include(c => c.EmployeResponsabilites)
+                    .ThenInclude(i => i.Responsabilite)
+                    .FirstOrDefaultAsync(e => e.NSS == employeID);
+
+                return employe;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while retrieving the employee with ID {employeID}: {ex.Message}");
+            }
+        }
+
 
         public async Task<double> GetTotalWorkingDay(string employeID, int year, int month)
         {

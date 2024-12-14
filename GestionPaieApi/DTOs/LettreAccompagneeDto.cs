@@ -3,7 +3,7 @@
     public class LettreAccompagneeDto
     {
         
-        public int? DemandId { get; set; } =null;
+        
         public string EmployeId { get; set; }
 
         public string TypeChangement { get; set; }

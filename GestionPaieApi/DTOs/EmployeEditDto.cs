@@ -23,7 +23,7 @@ namespace GestionPaieApi.Models
         public Sexe? Sexe { get; set; }
 
         [MaxLength(20)]
-        public SituationFamiliale? SituationFamiliale { get; set; }
+        public int? SituationFamiliale { get; set; }
 
         [MaxLength(200)]
         public string? Adresse { get; set; }

@@ -5,7 +5,7 @@ namespace GestionPaieApi.DTOs
 {
     public class FicheAttachemntDTO
     {
-        public int? FaID { get; set; } = null;
+        
 
         public string EmployeeID { get; set; }
         public double Remboursement { get; set; }
