@@ -27,8 +27,8 @@ namespace GestionPaieApi.Models
 
         public int Month {  get; set; }
         public int Year {  get; set; }
-        public int PRI;
+        public int PRI { get; set; }
 
-        public int PRC;
+        public int PRC { get; set; }
     }
 }

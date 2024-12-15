@@ -12,8 +12,8 @@ namespace GestionPaieApi.Interfaces
         Task<Employe> GetEmployeeByID(string employeID);
         Task<Employe> GetEmployeeByIDFull(string employeID);
 
-        // todo -- 3ytlha f fich attachemnt controler
-        Task<double> GetTotalWorkingDay(string employeID,int year,int month);
+        
+        Task<int> GetTotalWorkingDay(string employeID,int year,int month);
 
 
         Task<List<Employe>> GetUntachmntEmployeeFiche(int month, int year);

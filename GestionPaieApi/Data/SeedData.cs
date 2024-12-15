@@ -151,6 +151,87 @@ namespace GestionPaieApi.Data
                 context.EmployeResponsabilites.AddRange(employeResponsibilities);
                 context.SaveChanges();
             }
+            if (!context.Pointages.Any())
+            {
+                var pointages = new List<Pointage>
+                {
+                        new Pointage
+                    {
+                        Date = new DateTime(2024, 12, 14),
+                        EmployeId = "2345678901",
+                        DebutMatinee = new TimeSpan(8, 0, 0),
+                        FinMatinee = new TimeSpan(12, 0, 0),
+                        DebutApresMidi = new TimeSpan(13, 0, 0),
+                        FinApresMidi = new TimeSpan(17, 0, 0),
+                        DureeDePause = new TimeSpan(1, 0, 0),
+                        HeuresSupplementaires = 2.0,
+                        HeuresTotales = 10.0
+                    },
+                    new Pointage
+                    {
+                        Date = new DateTime(2024, 12, 15),
+                        EmployeId = "2345678901",
+                        DebutMatinee = new TimeSpan(8, 30, 0),
+                        FinMatinee = new TimeSpan(12, 30, 0),
+                        DebutApresMidi = new TimeSpan(14, 0, 0),
+                        FinApresMidi = new TimeSpan(18, 0, 0),
+                        DureeDePause = new TimeSpan(1, 30, 0),
+                        HeuresSupplementaires = 1.5,
+                        HeuresTotales = 9.5
+                    },
+                    new Pointage
+                    {
+                        Date = new DateTime(2024, 11, 10),
+                        EmployeId = "2345678901",
+                        DebutMatinee = new TimeSpan(9, 0, 0),
+                        FinMatinee = new TimeSpan(12, 0, 0),
+                        DebutApresMidi = new TimeSpan(13, 30, 0),
+                        FinApresMidi = new TimeSpan(17, 30, 0),
+                        DureeDePause = new TimeSpan(1, 30, 0),
+                        HeuresSupplementaires = 1.0,
+                        HeuresTotales = 8.5
+                    },
+                    new Pointage
+                    {
+                        Date = new DateTime(2024, 11, 11),
+                        EmployeId = "2345678901",
+                        DebutMatinee = new TimeSpan(8, 0, 0),
+                        FinMatinee = new TimeSpan(11, 30, 0),
+                        DebutApresMidi = new TimeSpan(13, 0, 0),
+                        FinApresMidi = new TimeSpan(16, 30, 0),
+                        DureeDePause = new TimeSpan(1, 0, 0),
+                        HeuresSupplementaires = 0.5,
+                        HeuresTotales = 8.0
+                    },
+                    new Pointage
+                    {
+                        Date = new DateTime(2024, 12, 18),
+                        EmployeId = "2345678901",
+                        DebutMatinee = new TimeSpan(8, 15, 0),
+                        FinMatinee = new TimeSpan(12, 15, 0),
+                        DebutApresMidi = new TimeSpan(13, 15, 0),
+                        FinApresMidi = new TimeSpan(17, 15, 0),
+                        DureeDePause = new TimeSpan(1, 0, 0),
+                        HeuresSupplementaires = 2.0,
+                        HeuresTotales = 10.0
+                    },
+                    new Pointage
+                    {
+                        Date = new DateTime(2024, 12, 20),
+                        EmployeId = "2345678901",
+                        DebutMatinee = new TimeSpan(9, 0, 0),
+                        FinMatinee = new TimeSpan(12, 0, 0),
+                        DebutApresMidi = new TimeSpan(13, 30, 0),
+                        FinApresMidi = new TimeSpan(17, 0, 0),
+                        DureeDePause = new TimeSpan(1, 30, 0),
+                        HeuresSupplementaires = 1.5,
+                        HeuresTotales = 9.0
+                    }
+                };
+
+                context.Pointages.AddRange(pointages);
+                context.SaveChanges();
+            }
             if (!context.FicheAttachemnts.Any())
             {
                 var ficheAttachemnts = new List<FicheAttachemnt>

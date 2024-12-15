@@ -32,7 +32,7 @@ namespace GestionPaieApi.Controllers
         }
 
         #region Get
-        [HttpGet("GetEmployeSignaletiqueByID")]
+        [HttpGet("GetEmployeSignaletiqueByID/{NSS}")]
         public async Task<ActionResult<Employe>> GetEmployeSignaletique(String NSS)
         {
             try
@@ -52,7 +52,7 @@ namespace GestionPaieApi.Controllers
                 return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
             }
         }
-        // todo--: zid PRI w PRC
+        
         [HttpGet("GetEmployeFA")]
         public async Task<ActionResult<Employe>> GetEmployeFicheAttachemnt(int month, int year)
         {
@@ -98,7 +98,7 @@ namespace GestionPaieApi.Controllers
 
 
         [HttpPost("PostEmployeFA")]
-        public async Task<IActionResult> PostEmployeFicheAttachemnt(FicheAttachemntDTO ficheAttachemntDTO)
+        public async Task<IActionResult> PostEmployeFicheAttachemnt(FicheAttachemntDTO ficheAttachemntDTO,int month,int year)
         {
             try
             {
@@ -111,6 +111,7 @@ namespace GestionPaieApi.Controllers
                 ficheAttache.NomEtPrenom = $"{employee.Nom} {employee.Prenom}";
 
                 ficheAttache.AllocationFamiliale = employee.NombreEnfants;
+                ficheAttache.JourTravaillee =await _employeRepo.GetTotalWorkingDay(employee.NSS, year, month);
                 if (_context.FicheAttachemnts.Contains(ficheAttache))
                 {
                     return StatusCode(500, $"Fiche Employee ALready exist , try to edit it ");

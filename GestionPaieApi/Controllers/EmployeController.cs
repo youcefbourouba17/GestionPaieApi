@@ -51,7 +51,7 @@ namespace GestionPaieApi.Controllers
             }
         }
 
-        [HttpGet("GetEmployeeResponsabilitiesByID")]
+        [HttpGet("GetEmployeeResponsabilitiesByID/{NSS}")]
         public async Task<ActionResult<Employe>> GetEmployeResponsibiliesByID(string NSS)
         {
             try
@@ -69,7 +69,7 @@ namespace GestionPaieApi.Controllers
             }
         }
 
-        [HttpGet("GetEmployeByID")]
+        [HttpGet("GetEmployeByID/{NSS}")]
         public async Task<ActionResult<Employe>> GetEmployeByID(string NSS)
         {
             try
@@ -162,22 +162,25 @@ namespace GestionPaieApi.Controllers
 
         #region PUT Methods
         // todo-- djib klch w dir update
-        [HttpPut("EditEmploye")]
+        [HttpPut("EditEmployeInfo")]
         public async Task<IActionResult> EditEmploye([FromBody] EmployeEditDto employeDto)
         {
             try
             {
-                var employe = await _employeRepo.GetEmployeeByIDFull(employeDto.NSS);
+                var employe = await _employeRepo.GetEmployeeByID(employeDto.NSS);
                 if (employe == null)
                 {
                     return NotFound($"Employe with ID {employeDto.NSS} not found.");
                 }
 
+                // Detach the original entity if it exists
+                _context.Entry(employe).State = EntityState.Detached;
+
                 // Map the DTO to the entity
-                _mapper.Map(employeDto, employe);
+                var emp = _mapper.Map<Employe>(employeDto);
 
                 // Update in the repository
-                await _genericRepository.Update(employe);
+                await _genericRepository.Update(emp);
 
                 return Ok("Employee updated successfully.");
             }
@@ -187,10 +190,52 @@ namespace GestionPaieApi.Controllers
             }
         }
 
+
+        [HttpPut("EditEmployeResp")]
+        public async Task<IActionResult> EditEmployeResponsabilites(
+                                                    [FromQuery] string NSS,
+                                                    [FromBody] List<string> responsablitesIDList)
+        {
+            try
+            {
+                var employe = await _employeRepo.GetEmployeeResponsabilitiesByID(NSS);
+                if (employe == null)
+                {
+                    return NotFound($"Employe with ID {NSS} not found.");
+                }
+
+                var responsibilities = await _context.ResponsabilitesAdministratives
+                    .Where(r => responsablitesIDList.Contains(r.ResponsabiliteID))
+                    .ToListAsync();
+                List<EmployeResponsabilites> employeeRespList = new List<EmployeResponsabilites>();
+                foreach (var item in responsibilities)
+                {
+                    employeeRespList.Add(new EmployeResponsabilites
+                    {
+                        EmployeID = NSS,
+                        ResponsabiliteID = item.ResponsabiliteID,
+                        Responsabilite = item
+                    });
+                }
+
+                // Update in the repository
+                _context.EmployeResponsabilites.RemoveRange(_context.EmployeResponsabilites.Where(er => er.EmployeID == NSS));
+                _context.EmployeResponsabilites.AddRange(employeeRespList);
+                await _context.SaveChangesAsync();
+
+                return Ok("Employee Responsibilities updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while updating the employee: {ex.Message}");
+            }
+        }
+
+
         #endregion
 
         #region DELETE Method
-        [HttpDelete("DeleteEmploye")]
+        [HttpDelete("DeleteEmploye/{NSS}")]
         public async Task<IActionResult> DeleteEmploye(string nss)
         {
             try

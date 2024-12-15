@@ -9,8 +9,11 @@ namespace GestionPaieApi.Mapper
         public EmployeProfile()
         {
             CreateMap<Employe, EmployeDisplayDto>();
-
-            CreateMap<EmployeEditDto, Employe>();
+            CreateMap<EmployeDisplayDto, Employe>();
+            CreateMap<Employe, EmployeEditDto>()
+                .ForMember(dest => dest.EmployeResponsabilites, opt => opt.MapFrom(src => src.EmployeResponsabilites.Select(er => er.ResponsabiliteID).ToList())); // Explicitly mapping responsibilities
+            CreateMap<EmployeEditDto, Employe>()
+                .ForMember(dest => dest.EmployeResponsabilites, opt => opt.Ignore()); // Ignore responsibilities when updating from DTO
         }
     }
 }
