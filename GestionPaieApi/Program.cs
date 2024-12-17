@@ -21,6 +21,7 @@ builder.Services.AddScoped<GenericRepository<Employe>, GenericRepository<Employe
 builder.Services.AddScoped<GenericRepository<LettreAccompagnee>, GenericRepository<LettreAccompagnee>>();
 builder.Services.AddScoped<GenericRepository<Pointage>, GenericRepository<Pointage>>();
 builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
+builder.Services.AddScoped<IBulletinSalaireRepo, BulletinSalaireRepo>();
 
 var app = builder.Build();
 

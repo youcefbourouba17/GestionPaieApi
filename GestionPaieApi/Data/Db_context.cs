@@ -1,4 +1,5 @@
-﻿using GestionPaieApi.Models;
+﻿using GestionPaieApi.DTOs;
+using GestionPaieApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestionPaieApi.Data
@@ -14,6 +15,8 @@ namespace GestionPaieApi.Data
         public DbSet<EmployeResponsabilites> EmployeResponsabilites { get; set; }
         public DbSet<Pointage> Pointages { get; set; }
         public DbSet<FicheAttachemnt> FicheAttachemnts { get; set; }
+        public DbSet<GrilleSalaire> GrilleSalaires { get; set; }
+        public DbSet<BulletinDeSalaire> BulletinDeSalaires { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,6 +49,14 @@ namespace GestionPaieApi.Data
                 .WithMany() 
                 .HasForeignKey(f => f.EmployeeID);
 
+            modelBuilder.Entity<GrilleSalaire>(entity =>
+            {
+                entity.Property(e => e.BaseSalary)
+                      .HasPrecision(18, 2); 
+
+                entity.Property(e => e.SalaireNet)
+                      .HasPrecision(18, 2);
+            });
 
 
             //SeedData.Initialize(this);

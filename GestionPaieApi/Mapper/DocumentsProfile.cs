@@ -12,6 +12,9 @@ namespace GestionPaieApi.Mapper
 
             CreateMap<FicheAttachemnt, FicheAttachemntDTO>();
             CreateMap<FicheAttachemntDTO, FicheAttachemnt>();
+
+            CreateMap<ResponsabiliteAdministrative, ResponsibiliteDTO>();
+            CreateMap<ResponsibiliteDTO, ResponsabiliteAdministrative>();
         }
         
     }

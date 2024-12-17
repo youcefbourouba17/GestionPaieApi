@@ -16,8 +16,10 @@ namespace GestionPaieApi.Models
         [ForeignKey("EmployeeID")]
         public string EmployeeID { get; set; }
         public Employe Employe { get; set; }
+
+
         [Required]
-        public int JourTravaillee { get; set; }
+        public int JourTravaillee { get; set; } = 0;
 
         
 

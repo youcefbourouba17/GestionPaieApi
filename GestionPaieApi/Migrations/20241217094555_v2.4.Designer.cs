@@ -4,6 +4,7 @@ using GestionPaieApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionPaieApi.Migrations
 {
     [DbContext(typeof(Db_context))]
-    partial class Db_contextModelSnapshot : ModelSnapshot
+    [Migration("20241217094555_v2.4")]
+    partial class v24
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,13 +39,13 @@ namespace GestionPaieApi.Migrations
                     b.Property<int?>("FicheAttachemntYear")
                         .HasColumnType("int");
 
-                    b.Property<string>("GrilleSalaireID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Mois")
                         .IsRequired()
                         .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("NSS_EMPLOYE")
+                        .IsRequired()
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("Salaire")
@@ -50,7 +53,7 @@ namespace GestionPaieApi.Migrations
 
                     b.HasKey("Id_FichAtachemnt");
 
-                    b.HasIndex("GrilleSalaireID");
+                    b.HasIndex("NSS_EMPLOYE");
 
                     b.HasIndex("FicheAttachemntMonth", "FicheAttachemntYear", "FicheAttachemntEmployeeID");
 
@@ -329,9 +332,9 @@ namespace GestionPaieApi.Migrations
 
             modelBuilder.Entity("GestionPaieApi.Models.BulletinDeSalaire", b =>
                 {
-                    b.HasOne("GestionPaieApi.Models.GrilleSalaire", "GrilleSalaire")
+                    b.HasOne("GestionPaieApi.Models.Employe", "Employe")
                         .WithMany()
-                        .HasForeignKey("GrilleSalaireID")
+                        .HasForeignKey("NSS_EMPLOYE")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -339,9 +342,9 @@ namespace GestionPaieApi.Migrations
                         .WithMany()
                         .HasForeignKey("FicheAttachemntMonth", "FicheAttachemntYear", "FicheAttachemntEmployeeID");
 
-                    b.Navigation("FicheAttachemnt");
+                    b.Navigation("Employe");
 
-                    b.Navigation("GrilleSalaire");
+                    b.Navigation("FicheAttachemnt");
                 });
 
             modelBuilder.Entity("GestionPaieApi.Models.EmployeResponsabilites", b =>

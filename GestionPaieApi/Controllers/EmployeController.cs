@@ -93,7 +93,7 @@ namespace GestionPaieApi.Controllers
             try
             {
                 var employe = _mapper.Map<List<EmployeDisplayDto>>(await _employeRepo.SearchUsersAsync(searchTerm));
-                if (employe == null)
+                if (employe.IsNullOrEmpty())
                 {
                     return NotFound("Aucun Employee trouvé.");
                 }
@@ -111,7 +111,7 @@ namespace GestionPaieApi.Controllers
             try
             {
                 var employe = await _employeRepo.GetUntachmntEmployeeFiche(month, year);
-                if (employe == null)
+                if (employe.IsNullOrEmpty())
                 {
                     return NotFound("Aucun Employee trouvé.");
                 }
@@ -134,14 +134,18 @@ namespace GestionPaieApi.Controllers
         {
             try
             {
+                if (await _employeRepo.CheckEmployeeAsync(employeDto.NSS))
+                {
+                    return BadRequest("employee already exist");
+                }
                 var employe = _mapper.Map<Employe>(employeDto);
                 var resposabilities = await _context.ResponsabilitesAdministratives
                             .Where(er => employeDto.EmployeResponsabilites.Contains(er.ResponsabiliteID))
                             .ToListAsync();
-                List<EmployeResponsabilites> list = new List<EmployeResponsabilites>();
+                List<EmployeResponsabilites> listEmpRespo = new List<EmployeResponsabilites>();
                 foreach (var item in resposabilities)
                 {
-                    list.Add(new EmployeResponsabilites
+                    listEmpRespo.Add(new EmployeResponsabilites
                     {
                         EmployeID = employeDto.NSS,
                         ResponsabiliteID = item.ResponsabiliteID
@@ -149,6 +153,7 @@ namespace GestionPaieApi.Controllers
                 }
                 // Save to repository
                 await _genericRepository.AddAsync(employe);
+                await _context.EmployeResponsabilites.AddRangeAsync(listEmpRespo);
 
                 return Ok("Employee created successfully.");
             }
@@ -190,7 +195,7 @@ namespace GestionPaieApi.Controllers
             }
         }
 
-
+        
         [HttpPut("EditEmployeResp")]
         public async Task<IActionResult> EditEmployeResponsabilites(
                                                     [FromQuery] string NSS,
