@@ -46,5 +46,8 @@ https://localhost:<port>/swagger
 - Ensure that the database server is running and accessible.
 
 ### DATA BASE
-![newDiag](https://github.com/user-attachments/assets/9e05d9f3-3b8e-4ddf-8e84-4cf670754946)
+![Class Diagram0](https://github.com/user-attachments/assets/bc7d2102-42fd-4a89-ae64-cb940a5506b0)
+
+
+
 
