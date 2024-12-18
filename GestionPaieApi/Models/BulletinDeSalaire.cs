@@ -5,28 +5,27 @@ namespace GestionPaieApi.Models
 {
     public class BulletinDeSalaire
     {
+        // Composite primary key consisting of multiple columns
         [Key]
-        [Required]
-        [ForeignKey("Id_FichAtachemnt")]
-        public string Id_FichAtachemnt { get; set; } // Primary Key
+        public int BulletinDeSalaireID { get; set; }
+
 
         [Required]
-        public FicheAttachemnt FicheAttachemnt { get; set; } // Navigation property for attachment
-        
+        [ForeignKey("Id_FichAtachemnt")]
+        public int Id_FichAtachemnt { get; set; }
+
+        [Required]
+        public FicheAttachemnt FicheAttachemnt { get; set; } 
 
         [Required]
         [ForeignKey("GrilleSalaireID")]
-        public string GrilleSalaireID { get; set; } // Foreign key to Employe
+        public int GrilleSalaireID { get; set; } 
 
-        public GrilleSalaire GrilleSalaire { get; set; } // Navigation property for Employe
-
-        [Required]
-        [StringLength(20, ErrorMessage = "Le mois ne peut pas dépasser 20 caractères.")]
-        public string Mois { get; set; } // Month
+        public GrilleSalaire? GrilleSalaire { get; set; } 
 
         [Required]
-        [Column(TypeName = "decimal(18,2)")] // Explicit precision for SQL Server
+        [Column(TypeName = "decimal(18,2)")] 
         [Range(0, double.MaxValue, ErrorMessage = "Le salaire doit être un nombre positif.")]
-        public decimal Salaire { get; set; } // Salary
+        public decimal Salaire { get; set; } 
     }
 }

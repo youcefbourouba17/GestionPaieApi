@@ -50,9 +50,10 @@ namespace GestionPaieApi.Reposotories
 
         #endregion
 
-        public Task SaveBulletin(BulletinDeSalaire bulletin)
+        public async Task SaveBulletin(BulletinDeSalaire bulletin)
         {
-            throw new NotImplementedException();
+            await _context.BulletinDeSalaires.AddAsync(bulletin);
+            await _context.SaveChangesAsync();
         }
 
         

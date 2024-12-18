@@ -49,15 +49,22 @@ namespace GestionPaieApi.Data
                 .WithMany() 
                 .HasForeignKey(f => f.EmployeeID);
 
+            // grille salaire
             modelBuilder.Entity<GrilleSalaire>(entity =>
             {
                 entity.Property(e => e.BaseSalary)
                       .HasPrecision(18, 2); 
-
-                entity.Property(e => e.SalaireNet)
-                      .HasPrecision(18, 2);
             });
+            modelBuilder.Entity<GrilleSalaire>()
+            .HasIndex(b => b.NSS_EMPLOYE)
+            .IsUnique();
 
+
+            // bultin slary
+
+            modelBuilder.Entity<BulletinDeSalaire>()
+            .HasIndex(b => b.Id_FichAtachemnt)
+            .IsUnique();
 
             //SeedData.Initialize(this);
         }

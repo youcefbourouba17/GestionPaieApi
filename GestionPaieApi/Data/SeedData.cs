@@ -275,15 +275,14 @@ namespace GestionPaieApi.Data
                     new GrilleSalaire
                 {
                     NSS_EMPLOYE = "1234567890",
+                    
                     BaseSalary = 30000m,
-                    SalaireNet = 2500m,
                     Grd = "B1"
                 },
                 new GrilleSalaire
                 {
                     NSS_EMPLOYE = "2345678901",
                     BaseSalary = 40000m,
-                    SalaireNet = 3500m,
                     Grd = "A2"
                 }
 
@@ -292,6 +291,7 @@ namespace GestionPaieApi.Data
                 context.GrilleSalaires.AddRange(grilleSalaires);
                 context.SaveChanges();
             }
+
         }
     }
 }

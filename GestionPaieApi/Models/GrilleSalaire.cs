@@ -5,11 +5,15 @@ namespace GestionPaieApi.Models
 {
     public class GrilleSalaire
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int GrilleSalaire_Id { get; set; }
+
         [Required]
-        [Key, ForeignKey("NSS_EMPLOYE")]
+        [ForeignKey("NSS_EMPLOYE")]
         public string NSS_EMPLOYE { get; set; }
 
-        public Employe Employe { get; set; }
+        public Employe? Employe { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]

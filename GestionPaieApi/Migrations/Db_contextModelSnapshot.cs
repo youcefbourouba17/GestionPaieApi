@@ -24,33 +24,37 @@ namespace GestionPaieApi.Migrations
 
             modelBuilder.Entity("GestionPaieApi.Models.BulletinDeSalaire", b =>
                 {
-                    b.Property<string>("Id_FichAtachemnt")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("BulletinDeSalaireID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BulletinDeSalaireID"));
 
                     b.Property<string>("FicheAttachemntEmployeeID")
+                        .IsRequired()
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int?>("FicheAttachemntMonth")
+                    b.Property<int>("FicheAttachemntMonth")
                         .HasColumnType("int");
 
-                    b.Property<int?>("FicheAttachemntYear")
+                    b.Property<int>("FicheAttachemntYear")
                         .HasColumnType("int");
 
-                    b.Property<string>("GrilleSalaireID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("GrilleSalaireID")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Mois")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("Id_FichAtachemnt")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Salaire")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("Id_FichAtachemnt");
+                    b.HasKey("BulletinDeSalaireID");
 
                     b.HasIndex("GrilleSalaireID");
+
+                    b.HasIndex("Id_FichAtachemnt")
+                        .IsUnique();
 
                     b.HasIndex("FicheAttachemntMonth", "FicheAttachemntYear", "FicheAttachemntEmployeeID");
 
@@ -202,8 +206,11 @@ namespace GestionPaieApi.Migrations
 
             modelBuilder.Entity("GestionPaieApi.Models.GrilleSalaire", b =>
                 {
-                    b.Property<string>("NSS_EMPLOYE")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("GrilleSalaire_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GrilleSalaire_Id"));
 
                     b.Property<decimal>("BaseSalary")
                         .HasPrecision(18, 2)
@@ -217,13 +224,16 @@ namespace GestionPaieApi.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<decimal>("SalaireNet")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("NSS_EMPLOYE")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("NSS_EMPLOYE");
+                    b.HasKey("GrilleSalaire_Id");
 
                     b.HasIndex("EmployeNSS");
+
+                    b.HasIndex("NSS_EMPLOYE")
+                        .IsUnique();
 
                     b.ToTable("GrilleSalaires");
                 });
@@ -337,7 +347,9 @@ namespace GestionPaieApi.Migrations
 
                     b.HasOne("GestionPaieApi.Models.FicheAttachemnt", "FicheAttachemnt")
                         .WithMany()
-                        .HasForeignKey("FicheAttachemntMonth", "FicheAttachemntYear", "FicheAttachemntEmployeeID");
+                        .HasForeignKey("FicheAttachemntMonth", "FicheAttachemntYear", "FicheAttachemntEmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("FicheAttachemnt");
 
