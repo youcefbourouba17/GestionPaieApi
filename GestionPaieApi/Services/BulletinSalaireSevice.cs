@@ -2,10 +2,10 @@
 
 namespace GestionPaieApi.Services
 {
-    public class BulletinSalaireSevice
+    public static class BulletinSalaireSevice
     {
 
-        public decimal? Calcul_Salaie(BulletinDeSalaire bulletin)
+        public static decimal Calcul_Salaie(BulletinDeSalaire bulletin)
         {
 
             if (bulletin.FicheAttachemnt.JourTravaillee != 0)
@@ -13,7 +13,7 @@ namespace GestionPaieApi.Services
                 return bulletin.GrilleSalaire.BaseSalary *
                             (bulletin.FicheAttachemnt.JourTravaillee / 28);
             }
-            return null;
+            return 0;
             
         }
     }

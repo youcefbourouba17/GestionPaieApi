@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using GestionPaieApi.Data;
 using GestionPaieApi.DTOs;
 using GestionPaieApi.Interfaces;
 using GestionPaieApi.Models;
 using GestionPaieApi.Repositories;
 using GestionPaieApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestionPaieApi.Controllers
 {
@@ -15,13 +17,41 @@ namespace GestionPaieApi.Controllers
         private readonly GenericRepository<Pointage> _genericRepository;
         private readonly IMapper _mapper;
         private readonly IEmployeeRepo _employeRepo;
+        private readonly Db_context _context;
 
-        public PointageController(GenericRepository<Pointage> genericRepository, IMapper mapper, IEmployeeRepo employeRepo)
+        public PointageController(GenericRepository<Pointage> genericRepository, 
+            IMapper mapper, IEmployeeRepo employeRepo , Db_context context)
         {
             _genericRepository = genericRepository;
             _mapper = mapper;
             _employeRepo = employeRepo;
+            _context = context;
         }
+
+        [HttpGet("GetAllPointageToday")]
+        public async Task<ActionResult<List<PointageDto>>> GetPointageToday()
+        {
+            try
+            {
+                var currentDate = DateTime.Today;
+
+                var pointagesToday = await _context.Pointages
+                    .Where(p => p.Date == currentDate)
+                    .ToListAsync();
+
+                var pointageDtos = _mapper.Map<List<PointageDto>>(pointagesToday);
+
+                return Ok(pointageDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                  "An error occurred while retrieving today's attendance.");
+            }
+        }
+
+
+
         [HttpPost("PostPointage")]
         public async Task<IActionResult> PostPointage([FromBody] string employeeID)
         {
@@ -34,11 +64,11 @@ namespace GestionPaieApi.Controllers
                 }
 
                 
-                var currentTime = DateTime.Today.Add(new TimeSpan(16,54, 0));
+                var currentTime = DateTime.Today;
                 var currentDate = currentTime.Date;
 
                 
-                Pointage pointage = await _genericRepository.GetByIdAsync(employeeID, currentDate);
+                Pointage? pointage = await _genericRepository.GetByIdAsync(employeeID, currentDate);
 
                 if (pointage == null)
                 {

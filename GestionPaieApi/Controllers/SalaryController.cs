@@ -4,6 +4,7 @@ using GestionPaieApi.DTOs;
 using GestionPaieApi.Interfaces;
 using GestionPaieApi.Models;
 using GestionPaieApi.Repositories;
+using GestionPaieApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,62 +12,96 @@ namespace GestionPaieApi.Controllers
 {
     public class SalaryController : ControllerBase
     {
-        private readonly GenericRepository<Employe> _genericRepository;
+        
         private readonly IMapper _mapper;
-        private readonly IEmployeeRepo _employeRepo;
+        private readonly IBulletinSalaireRepo _bulletinRepo;
         private readonly Db_context _context;
 
-        public SalaryController(GenericRepository<Employe> genericRepository, IMapper mapper, IEmployeeRepo employeRepo, Db_context context)
+        public SalaryController( IMapper mapper, IBulletinSalaireRepo bulletinRepo, Db_context context)
         {
-            _genericRepository = genericRepository;
+            
             _mapper = mapper;
-            _employeRepo = employeRepo;
+            _bulletinRepo = bulletinRepo;
             _context = context;
         }
 
 
         [HttpPost("CreateBulletinSalaire")]
-        public async Task<IActionResult> CreateEmploye([FromBody] BulletinDeSalaireDTO BulletinDTO)
+        public async Task<IActionResult> CreateBulletinSalaire([FromBody] BulletinDeSalaireDTO bulletinDTO)
         {
             try
             {
-                //if (await _employeRepo.chec(employeDto.NSS))
-                //{
-                //    return BadRequest("employee already exist");
-                //}
-                var fiche = await _context.FicheAttachemnts
-                            .Where(c => c.EmployeeID == BulletinDTO.NSS_EMPLOYE &&
-                                        c.Year == BulletinDTO.Year &&
-                                        c.Month == BulletinDTO.Month)
-                            .FirstOrDefaultAsync();
-                var grileSalaaire = await _context.GrilleSalaires
-                            .Where(c => c.NSS_EMPLOYE == BulletinDTO.NSS_EMPLOYE )
-                            .FirstOrDefaultAsync();
-
-                if (fiche != null && grileSalaaire!=null)
+                
+                if (bulletinDTO == null)
                 {
-                    
-                    BulletinDeSalaire bultin = new BulletinDeSalaire
-                    {
-                        FicheAttachemnt = fiche,
-                        GrilleSalaire=grileSalaaire,
-                        GrilleSalaireID=grileSalaaire.GrilleSalaire_Id,
-                        Salaire=5345345,
-                        Id_FichAtachemnt=fiche.FaID
-                    };
-
-                    
-                    _context.BulletinDeSalaires.Add(bultin);
-                    await _context.SaveChangesAsync();
+                    return BadRequest("Invalid request payload.");
                 }
 
-                return Ok("Employee created successfully.");
+                
+                var fiche = await _context.FicheAttachemnts
+                    .FirstOrDefaultAsync(c => c.EmployeeID == bulletinDTO.NSS_EMPLOYE &&
+                                              c.Year == bulletinDTO.Year &&
+                                              c.Month == bulletinDTO.Month);
+
+                if (fiche == null)
+                {
+                    return NotFound("Attachment (FicheAttachemnt) not found for the specified employee and date.");
+                }
+
+                
+                var grilleSalaire = await _bulletinRepo.GetGrilleSalaireByEmployeID(bulletinDTO.NSS_EMPLOYE);
+                if (grilleSalaire == null)
+                {
+                    return NotFound("Salary grid (GrilleSalaire) not found for the specified employee.");
+                }
+
+                
+                var bulletin = new BulletinDeSalaire
+                {
+                    FicheAttachemnt = fiche,
+                    GrilleSalaire = grilleSalaire,
+                    GrilleSalaireID = grilleSalaire.GrilleSalaire_Id,
+                    Id_FichAtachemnt = fiche.FaID
+                };
+
+                
+                bulletin.Salaire = BulletinSalaireSevice.Calcul_Salaie(bulletin);
+
+                
+                _context.BulletinDeSalaires.Add(bulletin);
+                await _context.SaveChangesAsync();
+
+                return Ok("Bulletin saved successfully.");
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while creating the employee: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"An error occurred while creating the bulletin: {ex.Message}");
             }
         }
+
+        [HttpGet("GetAllBultinSalaireByMonth")]
+        public async Task<ActionResult<List<BulletinDeSalaireDTO>>> GetAllBultinSalaireByMonth(int month,int year)
+        {
+            try
+            {
+
+
+                var pointagesToday = _bulletinRepo.GetAllBulletinsAsyncByMonth(month, year);
+
+                var pointageDtos = _mapper.Map<List<PointageDto>>(pointagesToday);
+
+                return Ok(pointageDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                  "An error occurred while retrieving today's attendance.");
+            }
+        }
+
+
+
 
     }
 }

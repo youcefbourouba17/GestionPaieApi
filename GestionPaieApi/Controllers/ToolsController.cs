@@ -23,7 +23,7 @@ namespace GestionPaieApi.Controllers
         }
 
         #region Get Methods
-        [HttpGet("GetAllEmployes")]
+        [HttpGet("GetAllResponsabilities")]
         public async Task<ActionResult<ICollection<ResponsabiliteAdministrative>>> GetAllResponsabilites()
         {
             try

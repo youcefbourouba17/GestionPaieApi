@@ -15,6 +15,9 @@ namespace GestionPaieApi.Mapper
 
             CreateMap<ResponsabiliteAdministrative, ResponsibiliteDTO>();
             CreateMap<ResponsibiliteDTO, ResponsabiliteAdministrative>();
+
+
+            CreateMap<Pointage, PointageDto>();
         }
         
     }

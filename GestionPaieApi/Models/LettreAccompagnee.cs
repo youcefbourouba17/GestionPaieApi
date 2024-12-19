@@ -9,10 +9,11 @@ namespace GestionPaieApi.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DemandeId { get; set; }
 
-        [Required] 
+        [Required]
+        [ForeignKey("EmployeId")]
         public string EmployeId { get; set; }
 
-        [ForeignKey("EmployeId")]
+        [Required]
         public Employe Employe { get; set; }
 
         [Required]
