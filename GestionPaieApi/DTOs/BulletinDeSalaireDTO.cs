@@ -10,9 +10,9 @@ namespace GestionPaieApi.DTOs
         [Required]
         [ForeignKey("NSS_EMPLOYE")]
         public string NSS_EMPLOYE { get; set; }
-
-        public FicheAttachemnt ficheAttachemnt { get; set; }
-        public GrilleSalaire grilleSalaire { get; set; }
+        public int BulletinDeSalaireID { get; set; }
+        public FicheAttachemnt? ficheAttachemnt { get; set; }
+        public GrilleSalaire? grilleSalaire { get; set; }
 
         [Required]
         public int Month

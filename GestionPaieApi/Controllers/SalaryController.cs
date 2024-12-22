@@ -25,19 +25,15 @@ namespace GestionPaieApi.Controllers
         }
 
         [HttpPost("CreateBulletinSalaire")]
-        public async Task<IActionResult> CreateBulletinSalaire([FromBody] BulletinDeSalaireDTO bulletinDTO)
+        public async Task<IActionResult> CreateBulletinSalaire(string NSS_EMPLOYE,int Month,int Year)
         {
             try
             {
-                if (bulletinDTO == null)
-                {
-                    return BadRequest("Invalid request payload.");
-                }
 
                 var fiche = await _context.FicheAttachemnts
-                    .FirstOrDefaultAsync(c => c.EmployeeID == bulletinDTO.NSS_EMPLOYE &&
-                                              c.Year == bulletinDTO.Year &&
-                                              c.Month == bulletinDTO.Month);
+                    .FirstOrDefaultAsync(c => c.EmployeeID == NSS_EMPLOYE &&
+                                              c.Year == Year &&
+                                              c.Month == Month);
 
                 if (fiche == null)
                 {
@@ -45,7 +41,7 @@ namespace GestionPaieApi.Controllers
                 }
 
                 //var grilleSalaire = await _bulletinRepo.GetGrilleSalaireByEmployeID(bulletinDTO.NSS_EMPLOYE);
-                var grilleSalaire = await _bulletinRepo.GetGrilleSalaireByEmployeIDAsync(bulletinDTO.NSS_EMPLOYE);
+                var grilleSalaire = await _bulletinRepo.GetGrilleSalaireByEmployeIDAsync(NSS_EMPLOYE);
                 if (grilleSalaire == null)
                 {
                     return NotFound("Salary grid (GrilleSalaire) not found for the specified employee.");

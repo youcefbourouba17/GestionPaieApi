@@ -135,9 +135,9 @@ namespace GestionPaieApi.Repositories
                 .ToListAsync();
         }
 
-        public Task<GrilleSalaire?> GetGrilleSalaireByEmployeIDAsync(string employeID)
+        public async Task<GrilleSalaire?> GetGrilleSalaireByEmployeIDAsync(string employeID)
         {
-            throw new NotImplementedException();
+            return await _context.GrilleSalaires.Where(c => c.NSS_EMPLOYE==employeID).FirstOrDefaultAsync();
         }
     }
 }

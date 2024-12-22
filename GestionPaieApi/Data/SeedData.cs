@@ -227,7 +227,35 @@ namespace GestionPaieApi.Data
                         HeuresSupplementaires = 1.5,
                         HeuresTotales = 9.0
                     }
+
                 };
+
+                context.Pointages.AddRange(pointages);
+                context.SaveChanges();
+            }
+            // Seed Pointages for Bouzid Ahmed (30 days)
+            if (!context.Pointages.Any(p => p.EmployeId == "1234567890"))
+            {
+                var pointages = new List<Pointage>();
+                DateTime startDate = new DateTime(2024, 12, 1); // starting date
+
+                for (int i = 0; i < 30; i++)
+                {
+                    DateTime currentDate = startDate.AddDays(i);
+
+                    pointages.Add(new Pointage
+                    {
+                        Date = currentDate,
+                        EmployeId = "1234567890",
+                        DebutMatinee = new TimeSpan(8, 0, 0),
+                        FinMatinee = new TimeSpan(12, 0, 0),
+                        DebutApresMidi = new TimeSpan(13, 0, 0),
+                        FinApresMidi = new TimeSpan(17, 0, 0),
+                        DureeDePause = new TimeSpan(1, 0, 0),
+                        HeuresSupplementaires = 1.0, // Example of extra hours, adjust as necessary
+                        HeuresTotales = 8.0 + 1.0 // 8 hours of regular time + 1 hour of overtime
+                    });
+                }
 
                 context.Pointages.AddRange(pointages);
                 context.SaveChanges();

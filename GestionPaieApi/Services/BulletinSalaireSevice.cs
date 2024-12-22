@@ -7,14 +7,20 @@ namespace GestionPaieApi.Services
 
         public static decimal Calcul_Salaie(BulletinDeSalaire bulletin)
         {
+            int totalDaysInMonth = 29; 
+            int daysWorked = bulletin.FicheAttachemnt.JourTravaillee;
 
-            if (bulletin.FicheAttachemnt.JourTravaillee != 0)
+            if (daysWorked > 0)
             {
-                return bulletin.GrilleSalaire.BaseSalary *
-                            (bulletin.FicheAttachemnt.JourTravaillee / 28);
+                decimal dailyRate = bulletin.GrilleSalaire.BaseSalary / totalDaysInMonth;
+                decimal proratedSalary = dailyRate * daysWorked;
+
+                
+                return Math.Round(proratedSalary, 2);
             }
-            return 0;
-            
+
+            return 0; 
         }
+
     }
 }

@@ -59,14 +59,6 @@ namespace GestionPaieApi.Reposotories
 
         public async Task<int> GetTotalWorkingDay(string employeID, int year, int month)
         {
-            int daysInMonth = DateTime.DaysInMonth(year, month);
-            int totalWorkingHoursInMonth = daysInMonth switch
-            {
-                28 or 29 => 160, 
-                30 => 168,       
-                31 => 176,      
-                _ => 160         
-            };
 
             var totalWorkedHours = await _context.Pointages
                 .Where(c => c.EmployeId == employeID &&
@@ -75,7 +67,7 @@ namespace GestionPaieApi.Reposotories
                 .SumAsync(c => c.HeuresTotales ?? 0);
 
             
-            return (int) totalWorkedHours / totalWorkingHoursInMonth;
+            return (int) totalWorkedHours / 8;
         }
 
         public async Task<int?> AllocationFamiliale(string employeID)
