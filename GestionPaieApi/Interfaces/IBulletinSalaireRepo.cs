@@ -4,24 +4,26 @@ namespace GestionPaieApi.Interfaces
 {
     public interface IBulletinSalaireRepo
     {
-        #region get
-        Task<BulletinDeSalaire> GetBulletinDeSalaireByID(string id);
+        #region Get
+        Task<BulletinDeSalaire?> GetBulletinDeSalaireByIDAsync(int id);
 
-        Task<List<BulletinDeSalaire>> SearchBulletinsAsyncByEmployeeID(string searchTerm);
-        Task<List<BulletinDeSalaire>> GetAllBulletinsAsyncByMonth(int month,int year);
-        Task<bool> CheckBultinAsync(string employeID);
-        Task<BulletinDeSalaire> GetBulletinByEmployeID(string employeID,int month);
-        Task<List<BulletinDeSalaire>> GetAllBulletinByEmployeID(string employeID);
+        Task<List<BulletinDeSalaire>> SearchBulletinsAsyncByEmployeeIDAsync(string searchTerm);
 
-        Task<GrilleSalaire?> GetGrilleSalaireByEmployeID(string employeID);
+        Task<List<BulletinDeSalaire>> GetAllBulletinsAsyncByMonthAsync(int month, int year);
 
+        Task<bool> CheckBulletinExistsAsync(string employeID);
 
-        Task<List<Employe>> GetUntachmntEmployeeBultin(int month, int year);
+        Task<BulletinDeSalaire?> GetBulletinByEmployeIDAsync(string employeID, int month);
+
+        Task<List<BulletinDeSalaire>> GetAllBulletinsByEmployeIDAsync(string employeID);
+
+        Task<GrilleSalaire?> GetGrilleSalaireByEmployeIDAsync(string employeID);
+
+        Task<List<Employe>> GetUntachedEmployeeBulletinsAsync(int month, int year);
         #endregion
 
-        #region post
-        Task SaveBulletin(BulletinDeSalaire bulletin);
+        #region Post
+        Task SaveBulletinAsync(BulletinDeSalaire bulletin);
         #endregion
-
     }
 }

@@ -66,6 +66,7 @@ namespace GestionPaieApi.Data
             .HasIndex(b => b.Id_FichAtachemnt)
             .IsUnique();
 
+
             //SeedData.Initialize(this);
         }
     }

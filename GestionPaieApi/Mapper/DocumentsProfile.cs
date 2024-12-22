@@ -18,6 +18,9 @@ namespace GestionPaieApi.Mapper
 
 
             CreateMap<Pointage, PointageDto>();
+
+            CreateMap<BulletinDeSalaire, BulletinDeSalaireDTO>();
+            CreateMap<BulletinDeSalaireDTO, BulletinDeSalaire>();
         }
         
     }

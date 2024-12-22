@@ -8,20 +8,20 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<Db_context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-/// scoopes
+
+// Scoped services
 builder.Services.AddScoped<GenericRepository<Employe>, GenericRepository<Employe>>();
 builder.Services.AddScoped<GenericRepository<LettreAccompagnee>, GenericRepository<LettreAccompagnee>>();
 builder.Services.AddScoped<GenericRepository<Pointage>, GenericRepository<Pointage>>();
-builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
 builder.Services.AddScoped<IBulletinSalaireRepo, BulletinSalaireRepo>();
+builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
+
 
 var app = builder.Build();
 
@@ -32,27 +32,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// migrate w add seeds
+// Migrate and seed the database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
     try
     {
         var context = services.GetRequiredService<Db_context>();
-        context.Database.Migrate(); 
+        context.Database.Migrate();
         SeedData.Initialize(context);
     }
     catch (Exception ex)
     {
-       
-        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
+        logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
