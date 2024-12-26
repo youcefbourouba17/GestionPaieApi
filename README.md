@@ -46,8 +46,9 @@ https://localhost:<port>/swagger
 - Ensure that the database server is running and accessible.
 
 ### DATA BASE
-![Class Diagram0](https://github.com/user-attachments/assets/bc7d2102-42fd-4a89-ae64-cb940a5506b0)
 
+
+![mermaid-flow-transparent (7)](https://github.com/user-attachments/assets/76080eee-c573-442a-b239-be3f27d308c4)
 
 
 
